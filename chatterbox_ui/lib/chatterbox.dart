@@ -3,6 +3,9 @@ import 'screens/home.dart';
 import 'navigations.dart';
 import 'screens/chat_room.dart';
 import 'screens/login_screen.dart';
+import 'screens/settings.dart';
+import 'screens/sub_settings/themepage.dart';
+import 'screens/sub_settings/infopage.dart';
 
 class ChatterBox extends StatefulWidget {
   @override
@@ -14,7 +17,7 @@ class _ChatterBoxState extends State<ChatterBox> {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        primaryColor: Colors.red[300],
+        primaryColor: Colors.red[400],
         canvasColor: Colors.grey[900],
       ),
       debugShowCheckedModeBanner: false,
@@ -34,12 +37,26 @@ class _ChatterBoxState extends State<ChatterBox> {
           break;
 
         case HOMEDIR:
-          screen = Home();
+          screen = Home(arguments is Map
+              ? arguments['server_response']
+              : 'Invalid server response');
           break;
 
         case CHATDIR:
           screen = ChatRoom(
               arguments is Map ? arguments['window'] : 'Invalid Argument');
+          break;
+
+        case SETTINGSDIR:
+          screen = Settings();
+          break;
+
+        case settingsThemesDir:
+          screen = SettingsThemePage();
+          break;
+
+        case settingsInfoDir:
+          screen = SettingsInfoPage();
           break;
 
         default:

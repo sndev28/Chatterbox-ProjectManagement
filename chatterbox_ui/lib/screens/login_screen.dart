@@ -1,7 +1,12 @@
 import 'package:flutter/material.dart';
 import '../styles/font_styles.dart';
+import '../backend_supporters/connections.dart';
+import '../navigations.dart';
 
 class LoginScreen extends StatelessWidget {
+  final usernameController = TextEditingController();
+  final passwordController = TextEditingController();
+  static String userMinDetails = '';
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -39,7 +44,7 @@ class LoginScreen extends StatelessWidget {
                 padding: const EdgeInsets.only(top: 100, left: 20, right: 20),
                 child: Card(
                   elevation: 8,
-                  color: Colors.red[200],
+                  color: Colors.red[400],
                   shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.all(Radius.circular(8))),
                   child: Column(
@@ -61,6 +66,7 @@ class LoginScreen extends StatelessWidget {
                         padding: EdgeInsets.only(left: 30, right: 30, top: 40),
                         child: TextField(
                           cursorColor: Colors.white,
+                          controller: usernameController,
                           decoration: InputDecoration(
                               border: UnderlineInputBorder(),
                               contentPadding: EdgeInsets.all(8.0),
@@ -73,6 +79,7 @@ class LoginScreen extends StatelessWidget {
                         padding: EdgeInsets.only(left: 30, right: 30, top: 10),
                         child: TextField(
                           cursorColor: Colors.white,
+                          controller: passwordController,
                           decoration: InputDecoration(
                               border: UnderlineInputBorder(),
                               contentPadding: EdgeInsets.all(8.0),
@@ -89,38 +96,107 @@ class LoginScreen extends StatelessWidget {
                           mainAxisAlignment: MainAxisAlignment.center,
                           crossAxisAlignment: CrossAxisAlignment.center,
                           children: [
-                            Card(
-                              elevation: 0,
-                              color: Colors.grey[900],
-                              shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10))),
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                    left: 10, right: 10, top: 5, bottom: 5),
-                                child: Text(
-                                  'Login',
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 15),
+                            InkWell(
+                                child: Card(
+                                  //Login Card
+                                  elevation: 0,
+                                  color: Colors.grey[900],
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(10))),
+                                  child: Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 10, right: 10, top: 5, bottom: 5),
+                                    child: Text(
+                                      'Login',
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 15),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
-                            Card(
-                              elevation: 0,
-                              color: Colors.grey[900],
-                              shape: RoundedRectangleBorder(
-                                  borderRadius:
-                                      BorderRadius.all(Radius.circular(10))),
-                              child: Padding(
-                                padding: EdgeInsets.only(
-                                    left: 10, right: 10, top: 5, bottom: 5),
-                                child: Text(
-                                  'Register',
-                                  style: TextStyle(
-                                      color: Colors.white, fontSize: 15),
+                                onTap: () async {
+                                  final response = await userLogin(
+                                      usernameController.text,
+                                      passwordController.text);
+
+                                  passwordController.text = '';
+
+                                  String snackbarString;
+                                  userMinDetails = response[1];
+
+                                  int statusCode = int.parse(response[0]);
+
+                                  switch (statusCode) {
+                                    case 200:
+                                      snackbarString = 'Please wait...';
+                                      break;
+                                    case 404:
+                                      snackbarString =
+                                          'User not found. Please register!';
+                                      break;
+                                    case 401:
+                                      snackbarString = 'Wrong Password.';
+                                      break;
+                                    default:
+                                      snackbarString =
+                                          'Error logging in. Try again later';
+                                  }
+
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(SnackBar(
+                                    content: Text(snackbarString),
+                                    duration: Duration(seconds: 2),
+                                  ));
+                                  if (statusCode == 200)
+                                    _gotoChatDir(context, response[1]);
+                                }),
+                            InkWell(
+                                child: Card(
+                                  // Register Card
+                                  elevation: 0,
+                                  color: Colors.grey[900],
+                                  shape: RoundedRectangleBorder(
+                                      borderRadius: BorderRadius.all(
+                                          Radius.circular(10))),
+                                  child: Padding(
+                                    padding: EdgeInsets.only(
+                                        left: 10, right: 10, top: 5, bottom: 5),
+                                    child: Text(
+                                      'Register',
+                                      style: TextStyle(
+                                          color: Colors.white, fontSize: 15),
+                                    ),
+                                  ),
                                 ),
-                              ),
-                            ),
+                                onTap: () async {
+                                  final responseCode = await newUserRegister(
+                                      usernameController.text,
+                                      passwordController.text);
+
+                                  passwordController.text = '';
+
+                                  String snackbarString;
+
+                                  switch (responseCode) {
+                                    case 200:
+                                      snackbarString =
+                                          'New user created. Please login with your credentials.';
+                                      break;
+                                    case 409:
+                                      snackbarString =
+                                          'Username already exists. Please use another username.';
+                                      break;
+                                    default:
+                                      snackbarString =
+                                          'Error in creating user.';
+                                  }
+
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(SnackBar(
+                                    content: Text(snackbarString),
+                                    duration: Duration(seconds: 4),
+                                  ));
+                                }),
                           ],
                         ),
                       ),
@@ -133,5 +209,10 @@ class LoginScreen extends StatelessWidget {
         ),
       ),
     );
+  }
+
+  _gotoChatDir(BuildContext context, String response) {
+    Navigator.pushReplacementNamed(context, HOMEDIR,
+        arguments: {'server_response': userMinDetails});
   }
 }
