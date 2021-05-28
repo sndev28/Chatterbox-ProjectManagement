@@ -6,6 +6,7 @@ import 'screens/login_screen.dart';
 import 'screens/settings.dart';
 import 'screens/sub_settings/themepage.dart';
 import 'screens/sub_settings/infopage.dart';
+import 'screens/project_page.dart';
 
 class ChatterBox extends StatefulWidget {
   @override
@@ -37,14 +38,11 @@ class _ChatterBoxState extends State<ChatterBox> {
           break;
 
         case HOMEDIR:
-          screen = Home(arguments is Map
-              ? arguments['server_response']
-              : 'Invalid server response');
+          screen = Home();
           break;
 
         case CHATDIR:
-          screen = ChatRoom(
-              arguments is Map ? arguments['window'] : 'Invalid Argument');
+          screen = ChatRoom();
           break;
 
         case SETTINGSDIR:
@@ -57,6 +55,10 @@ class _ChatterBoxState extends State<ChatterBox> {
 
         case settingsInfoDir:
           screen = SettingsInfoPage();
+          break;
+
+        case projectDir:
+          screen = ProjectPage();
           break;
 
         default:

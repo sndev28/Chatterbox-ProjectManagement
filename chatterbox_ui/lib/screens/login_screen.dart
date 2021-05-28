@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import '../styles/font_styles.dart';
 import '../backend_supporters/connections.dart';
 import '../navigations.dart';
+import '../backend_supporters/globals.dart';
 
 class LoginScreen extends StatelessWidget {
   final usernameController = TextEditingController();
@@ -128,6 +129,8 @@ class LoginScreen extends StatelessWidget {
 
                                   switch (statusCode) {
                                     case 200:
+                                      currentUser
+                                          .initializeFromJSON(response[1]);
                                       snackbarString = 'Please wait...';
                                       break;
                                     case 404:
@@ -147,8 +150,7 @@ class LoginScreen extends StatelessWidget {
                                     content: Text(snackbarString),
                                     duration: Duration(seconds: 2),
                                   ));
-                                  if (statusCode == 200)
-                                    _gotoChatDir(context, response[1]);
+                                  if (statusCode == 200) _gotoChatDir(context);
                                 }),
                             InkWell(
                                 child: Card(
@@ -211,8 +213,7 @@ class LoginScreen extends StatelessWidget {
     );
   }
 
-  _gotoChatDir(BuildContext context, String response) {
-    Navigator.pushReplacementNamed(context, HOMEDIR,
-        arguments: {'server_response': userMinDetails});
+  _gotoChatDir(BuildContext context) {
+    Navigator.pushReplacementNamed(context, HOMEDIR);
   }
 }

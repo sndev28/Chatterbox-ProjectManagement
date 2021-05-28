@@ -6,6 +6,9 @@ from flask_cors import CORS
 from datetime import datetime
 import random
 import string
+from requests import NullHandler
+
+from sqlalchemy.sql.elements import Null
 
 
 app = Flask(__name__)
@@ -25,9 +28,67 @@ with app.app_context():
 
 
 
+# class UserProjectDetails(db.Model):
+#     userID = db.Column(db.String, primary_key = True, nullable = False)
+#     projects = db.Column(db.String)
+
+#     def __repr__(self):
+#         return {self.userID : self.projects}
 
 
 
+# userProjectDetailsArgs = reqparse.RequestParser()
+# userProjectDetailsArgs.add_argument('userID', type = str, help = 'userID not sent!')
+# userProjectDetailsArgs.add_argument('projects', type = str, help = 'project IDs not sent!')
+
+
+# class UserProject(Resource):
+#     def get(self):
+#         args = userProjectDetailsArgs.parse_args()
+#         retrieved_user = UserProjectDetails.query.filter_by(userID = args['userID']).first()
+#         if not retrieved_user:
+#             return 'No such user exists!'
+
+#         return retrieved_user.__repr__()
+
+
+#     def put(self):
+#         args = userProjectDetailsArgs.parse_args()
+#         retrieved_user = UserProjectDetails.query.filter_by(userID = args['userID']).first()
+#         if not retrieved_user:
+#             new_user = UserProjectDetails(userID = args['userID'], projects = '')
+#             db.session.add(new_user)
+#             db.session.commit()
+
+#             return 'New user created'
+#         return 'User already exists'
+
+
+#     def patch(self):
+#         args = userProjectDetailsArgs.parse_args()
+#         retrieved_user = UserProjectDetails.query.filter_by(userID = args['userID']).first()
+#         if not retrieved_user:
+#             return 'No such user exists!'
+
+#         retrieved_user.projects += args['projects']
+#         db.session.commit()
+#         return 'Project list updated'
+
+
+
+# api.add_resource(UserProject, '/userprojects')
+
+
+
+
+
+
+
+
+
+
+
+#####################################################################################################################################
 
 
 
@@ -59,7 +120,7 @@ class ProjectDetails(db.Model):
 
 projectDetailsArgs = reqparse.RequestParser()
 projectDetailsArgs.add_argument('projectID', type = str, help = 'projectID not sent!')
-projectDetailsArgs.add_argument('projectName', type = str, help = 'projectName not sent!')
+projectDetailsArgs.add_argument('projectName', type = str, help = 'projectName not sent!', )
 projectDetailsArgs.add_argument('projectRepoLink', type = str, help = 'projectRepoLink not sent!')
 projectDetailsArgs.add_argument('projectAdmin', type = str, help = 'projectAdmin not sent!')
 projectDetailsArgs.add_argument('projectMembers', type = str, help = 'projectMembers not sent!')
@@ -70,27 +131,30 @@ projectDetailsArgs.add_argument('projectDescription', type = str, help = 'projec
 
 class Projects(Resource):
 
-    def put(self): #newproject
+    def put(self): #new project
         args = projectDetailsArgs.parse_args()
+        print(args)
         projectCreatedOn = datetime.now().strftime('%B %d, %Y %H:%M')
         projectID = 'PR_ID_' + ''.join(random.choices(string.ascii_uppercase + string.digits, k = 15))
-        newProject = ProjectDetails(**args, projectID = projectID, projectCreatedOn = projectCreatedOn)
+        newProject = ProjectDetails(projectName = args['projectName'], projectAdmin = args['projectAdmin'], projectRepoLink = args['projectRepoLink'], projectDescription = args['projectDescription'], projectID = projectID, projectCreatedOn = projectCreatedOn)
 
         db.session.add(newProject)
         db.session.commit()
 
-        return 'Project created!', 200
+        return newProject.toJSON(), 200
 
-    def get(self): # retrieve page
+    def post(self): # retrieve project
         args = projectDetailsArgs.parse_args()
         print(args)
 
         retrieved_project = ProjectDetails.query.filter_by(projectID = args['projectID']).first()
 
         if not retrieved_project:
-            abort(404, 'Given project not found')
+            abort(404, message = 'Given project not found')
 
-        return retrieved_project.toJSON(), 200
+        print(retrieved_project.toJSON())
+        return retrieved_project.toJSON()
+
 
 
 
@@ -125,13 +189,23 @@ api.add_resource(Projects, '/projectdetails')
 
 
 class UserDetails(db.Model):
-    user_id = db.Column(db.String, primary_key = True, nullable = False)
+    userID = db.Column(db.String, primary_key = True, nullable = False)
     username = db.Column(db.String, unique = True,  nullable = False)
     password = db.Column(db.String, nullable = False)
-    joined_on = db.Column(db.String, nullable = False)
+    joinedOn = db.Column(db.String, nullable = False)
+    projects = db.Column(db.String, nullable = False)
 
     def __repr__(self):
-        return f'Username : {self.username}, Joined on : {self.joined_on}'
+        return f'Username : {self.username}, Joined on : {self.joinedOn}'
+
+    def toJSON(self):
+
+        return {
+            'userID': self.userID,
+            'username': self.username,
+            'joinedOn': self.joinedOn,
+            'projects': self.projects,
+        }
 
 
 
@@ -140,6 +214,7 @@ class UserDetails(db.Model):
 user_args = reqparse.RequestParser()
 user_args.add_argument('username', type = str, help = 'No username was sent!', required = True)
 user_args.add_argument('password', type = str, help = 'Password empty!', required = True)
+user_args.add_argument('projects', type = str, help = 'Project empty!', required = False)
 
 
 
@@ -147,16 +222,25 @@ user_args.add_argument('password', type = str, help = 'Password empty!', require
 
 class User(Resource):
 
-    def post(self): #register
+    def get(self):
         args = user_args.parse_args()
-        print(args)
-        if UserDetails.query.filter_by(username = args['username']).first(): #username already taken
-            abort(409, message = 'Username already exists!')
+        user = UserDetails.query.filter_by(username = args['username']).first()
+        if not user: #username doesnt exist
+            abort(404, message = 'Username doesnt exist!')
 
-        joined_on = datetime.now().strftime('%B %d, %Y %H:%M')
-        user_id = 'USER_ID_' + ''.join(random.choices(string.ascii_uppercase + string.digits, k = 15))
+        return user.toJSON()
+
         
-        new_user = UserDetails(username = args['username'], password = args['password'], joined_on = joined_on, user_id = user_id)
+    def post(self): #register/updater
+        args = user_args.parse_args()
+        user = UserDetails.query.filter_by(username = args['username']).first()
+        if user: #username already taken
+            return user.toJSON()
+
+        joinedOn = datetime.now().strftime('%B %d, %Y %H:%M')
+        userID = 'USER_ID_' + ''.join(random.choices(string.ascii_uppercase + string.digits, k = 15))
+        
+        new_user = UserDetails(username = args['username'], password = args['password'], joinedOn = joinedOn, userID = userID, projects = '')
 
         db.session.add(new_user)
         db.session.commit()
@@ -178,7 +262,37 @@ class User(Resource):
         if user.password != args['password']:
             abort(401, message = 'Wrong Password!')
 
-        return {'user_id':user.user_id, 'joined_on': user.joined_on}
+        return user.toJSON()
+
+    def patch(self): #update projects
+        args = user_args.parse_args()
+        if not UserDetails.query.filter_by(username = args['username']).first(): #username doesnt exist
+            abort(404, message = 'Username doesnt exist!')
+
+        user = UserDetails.query.filter_by(username = args['username']).first()
+
+        user.projects += args['projects'] + ','
+        db.session.commit()
+
+        return user.toJSON()
+
+
+    def update(self): #update credentials
+        args = user_args.parse_args()
+        if not UserDetails.query.filter_by(username = args['username']).first(): #username doesnt exist
+            abort(404, message = 'Username doesnt exist!')
+
+        user = UserDetails.query.filter_by(username = args['username']).first()
+
+        if args['username'] != None or args['username'] != '':
+            user.username = args['username']
+
+        if args['password'] != None or args['password'] != '':
+            user.username = args['password']
+
+        db.session.commit()
+
+        return user.toJSON()
 
 
 
