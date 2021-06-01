@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import '../styles/font_styles.dart';
 import '../backend_supporters/connections.dart';
 import '../navigations.dart';
-import '../backend_supporters/globals.dart';
+import '../models/globals.dart';
 
 class LoginScreen extends StatelessWidget {
   final usernameController = TextEditingController();

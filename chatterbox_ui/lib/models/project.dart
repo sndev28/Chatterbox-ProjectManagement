@@ -8,6 +8,7 @@ class Project {
   String projectAdmin = '';
   String projectMembers = '';
   String projectDescription = '';
+  String projectChatList = '';
 
   Project(
       {projectID,
@@ -29,6 +30,7 @@ class Project {
     givenData['projectRepoLink'] ??= '';
     givenData['projectMembers'] ??= '';
     givenData['projectDescription'] ??= '';
+    givenData['projectChatList'] ??= '';
 
     this.projectID = givenData['projectID'];
     this.projectName = givenData['projectName'];
@@ -37,6 +39,7 @@ class Project {
     this.projectAdmin = givenData['projectAdmin'];
     this.projectMembers = givenData['projectMembers'];
     this.projectDescription = givenData['projectDescription'];
+    this.projectChatList = givenData['projectChatList'];
   }
 
   String details() {

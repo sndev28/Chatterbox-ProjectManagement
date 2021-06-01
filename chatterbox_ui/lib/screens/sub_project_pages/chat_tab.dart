@@ -1,0 +1,430 @@
+import 'package:flutter/material.dart';
+import '../../styles/font_styles.dart';
+import '../../models/globals.dart';
+import '../../navigations.dart';
+import '../../models/chat.dart';
+import '../../backend_supporters/connections.dart';
+import 'dart:convert';
+import 'package:after_layout/after_layout.dart';
+
+class ChatTab extends StatefulWidget {
+  @override
+  _ChatTabState createState() => _ChatTabState();
+}
+
+class _ChatTabState extends State<ChatTab> with AfterLayoutMixin<ChatTab> {
+  List<Chat> chatList = [];
+
+  @override
+  void initState() {
+    super.initState();
+    projectUpdate();
+  }
+
+  chatInitializer() async {
+    final List<String> chatIDsFromDatabase =
+        currentProject.projectChatList.split(',');
+
+    for (var chatID in chatIDsFromDatabase) {
+      if (chatID != '') {
+        Chat newChat = await retrieveChatFromID(chatID);
+        chatList.add(newChat);
+      }
+      setState(() {});
+    }
+  }
+
+  @override
+  void afterFirstLayout(BuildContext context) {
+    chatInitializer();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    final TextEditingController chatNameController = TextEditingController();
+    return Scaffold(
+      floatingActionButton: FloatingActionButton(
+        shape: CircleBorder(side: BorderSide(color: Colors.transparent)),
+        foregroundColor: Colors.white,
+        backgroundColor: Colors.black38,
+        elevation: 4,
+        child: Center(
+          child: Icon(Icons.add, size: 50),
+        ),
+        onPressed: () {
+          showDialog(
+              context: context,
+              builder: (BuildContext context) => Dialog(
+                    shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.all(Radius.circular(10.0))),
+                    child: Container(
+                        height: 350,
+                        width: 100,
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Container(
+                              height: 300,
+                              width: 100,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.stretch,
+                                children: [
+                                  Center(
+                                      child: Text(
+                                    'Create Project',
+                                    style: createProjectDialogueHeadingTheme,
+                                  )),
+                                  Padding(
+                                    padding: EdgeInsets.only(
+                                        top: 10, left: 10, right: 10),
+                                    child: TextField(
+                                      cursorColor: Colors.white,
+                                      controller: chatNameController,
+                                      decoration: InputDecoration(
+                                          border: UnderlineInputBorder(),
+                                          contentPadding: EdgeInsets.all(8.0),
+                                          labelText: 'Chat Name',
+                                          hintText: 'Enter chat name',
+                                          suffixIcon: Icon(Icons.edit)),
+                                    ),
+                                  ),
+                                ],
+                              ),
+                            ),
+                            Padding(
+                              padding: const EdgeInsets.only(bottom: 5),
+                              child: InkWell(
+                                child: Container(
+                                  decoration: BoxDecoration(
+                                    color: Colors.red[400],
+                                    shape: BoxShape.circle,
+                                    boxShadow: [
+                                      BoxShadow(
+                                        color: Colors.black,
+                                        blurRadius: 2.0,
+                                        spreadRadius: 0.0,
+                                        offset: Offset(0.0,
+                                            0.0), // shadow direction: bottom right
+                                      )
+                                    ],
+                                  ),
+                                  child: Icon(
+                                    Icons.add,
+                                    color: Colors.grey[800],
+                                    size: 40,
+                                  ),
+                                ),
+                                onTap: () async {
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(SnackBar(
+                                    content: Text('Chat is being created!'),
+                                    duration: Duration(seconds: 2),
+                                  ));
+                                  final response = await chatCreator(
+                                      chatName: chatNameController.text);
+
+                                  String resultText =
+                                      'Chat could not be created!';
+
+                                  if (response[0] == '200') {
+                                    resultText = 'Chat created!';
+                                    Map responseJson = jsonDecode(response[1]);
+                                    Chat newChat = Chat(
+                                        chatID: responseJson['chatID'],
+                                        chatName: responseJson['chatName']);
+                                    setState(() {
+                                      chatList.add(newChat);
+                                    });
+                                    Navigator.pop(context);
+                                    chatNameController.text = '';
+                                  }
+                                  ScaffoldMessenger.of(context)
+                                      .showSnackBar(SnackBar(
+                                    content: Text(resultText),
+                                    duration: Duration(seconds: 4),
+                                  ));
+                                },
+                              ),
+                            ),
+                          ],
+                        )),
+                  ));
+        },
+      ),
+      body: Stack(
+        children: [
+          SingleChildScrollView(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.only(top: 80),
+                  child: ReorderableListView.builder(
+                      itemCount: chatList.length,
+                      primary: false,
+                      shrinkWrap: true,
+                      onReorder: (oldIndex, newIndex) {
+                        setState(() {
+                          if (newIndex > oldIndex) {
+                            newIndex = newIndex - 1;
+                          }
+                          final element = chatList.removeAt(oldIndex);
+                          chatList.insert(newIndex, element);
+                        });
+                      },
+                      padding: EdgeInsets.all(16.0),
+                      itemBuilder: (context, index) =>
+                          _cardGenerator(chatList[index])),
+                ),
+
+                // Center(
+                //   child: IconButton(
+                //       onPressed: () {
+                //         setState(() {});
+                //         ;
+                //       },
+                //       icon: Icon(
+                //         Icons.add,
+                //         color: Colors.white,
+                //       )),
+                // )
+              ],
+            ),
+          ),
+          Container(
+            width: MediaQuery.of(context).size.width,
+            height: 80,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.only(
+                bottomLeft: Radius.circular(30),
+                bottomRight: Radius.circular(30),
+              ),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black,
+                  blurRadius: 10.0,
+                  spreadRadius: 3.0,
+                  offset: Offset(2.0, 2.0), // shadow direction: bottom right
+                )
+              ],
+            ),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              crossAxisAlignment: CrossAxisAlignment.stretch,
+              children: [
+                Padding(
+                  padding: EdgeInsets.only(left: 25, bottom: 7),
+                  child: Text('Projects', style: HomeUserStyle),
+                ),
+              ],
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _cardGenerator(Chat chat) {
+    String cardTitle = chat.chatName;
+    String key = chat.chatID;
+
+    return Padding(
+      key: Key(key),
+      padding: const EdgeInsets.only(top: 20),
+      child: InkWell(
+        child: Card(
+          elevation: 12,
+          color: Colors.red[400],
+          shape: RoundedRectangleBorder(
+              borderRadius: BorderRadius.all(Radius.circular(12))),
+          child: ListTile(
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.start,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Icon(
+                  Icons.drag_handle,
+                  color: Colors.red[200],
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 12, right: 125),
+                  child: Text(
+                    cardTitle,
+                    style: chatCardSubTitleTheme,
+                  ),
+                ),
+              ],
+            ),
+            trailing: Icon(
+              Icons.arrow_forward_ios_outlined,
+              color: Colors.grey[900],
+            ),
+            onTap: () {
+              currentChat = chat;
+              Navigator.pushNamed(context, CHATDIR);
+            },
+          ),
+        ),
+      ),
+    );
+  }
+}
+
+// floatingActionButton: FloatingActionButton(
+//         shape: CircleBorder(side: BorderSide(color: Colors.transparent)),
+//         foregroundColor: Colors.white,
+//         backgroundColor: Colors.black38,
+//         elevation: 4,
+//         child: Center(
+//           child: Icon(Icons.add, size: 50),
+//         ),
+//         onPressed: () {
+//           showDialog(
+//               context: context,
+//               builder: (BuildContext context) => Dialog(
+//                     shape: RoundedRectangleBorder(
+//                         borderRadius: BorderRadius.all(Radius.circular(10.0))),
+//                     child: Container(
+//                         height: 350,
+//                         width: 100,
+//                         child: Column(
+//                           mainAxisAlignment: MainAxisAlignment.spaceBetween,
+//                           crossAxisAlignment: CrossAxisAlignment.stretch,
+//                           children: [
+//                             Container(
+//                               height: 300,
+//                               width: 100,
+//                               child: Column(
+//                                 crossAxisAlignment: CrossAxisAlignment.stretch,
+//                                 children: [
+//                                   Center(
+//                                       child: Text(
+//                                     'Create Project',
+//                                     style: createProjectDialogueHeadingTheme,
+//                                   )),
+//                                   Padding(
+//                                     padding: EdgeInsets.only(
+//                                         top: 10, left: 10, right: 10),
+//                                     child: TextField(
+//                                       cursorColor: Colors.white,
+//                                       controller: projectNameController,
+//                                       decoration: InputDecoration(
+//                                           border: UnderlineInputBorder(),
+//                                           contentPadding: EdgeInsets.all(8.0),
+//                                           labelText: 'Project Name',
+//                                           hintText: 'Enter project name',
+//                                           suffixIcon: Icon(Icons.edit)),
+//                                     ),
+//                                   ),
+//                                   Padding(
+//                                     padding: EdgeInsets.only(
+//                                         top: 10, left: 10, right: 10),
+//                                     child: TextField(
+//                                       cursorColor: Colors.white,
+//                                       maxLines: null,
+//                                       controller: projectDescriptionController,
+//                                       decoration: InputDecoration(
+//                                           border: UnderlineInputBorder(),
+//                                           contentPadding: EdgeInsets.all(8.0),
+//                                           labelText: 'Project Description',
+//                                           hintText: 'Enter project description',
+//                                           suffixIcon: Icon(Icons.edit)),
+//                                     ),
+//                                   ),
+//                                   Padding(
+//                                     padding: EdgeInsets.only(
+//                                         top: 10, left: 10, right: 10),
+//                                     child: TextField(
+//                                       cursorColor: Colors.white,
+//                                       controller: projectRepoLinkController,
+//                                       decoration: InputDecoration(
+//                                           border: UnderlineInputBorder(),
+//                                           contentPadding: EdgeInsets.all(8.0),
+//                                           labelText: 'Project Repo Link',
+//                                           hintText:
+//                                               'Enter project link(optional)',
+//                                           suffixIcon: Icon(Icons.edit)),
+//                                     ),
+//                                   ),
+//                                 ],
+//                               ),
+//                             ),
+//                             Padding(
+//                               padding: const EdgeInsets.only(bottom: 5),
+//                               child: InkWell(
+//                                 child: Container(
+//                                   decoration: BoxDecoration(
+//                                     color: Colors.red[400],
+//                                     shape: BoxShape.circle,
+//                                     boxShadow: [
+//                                       BoxShadow(
+//                                         color: Colors.black,
+//                                         blurRadius: 2.0,
+//                                         spreadRadius: 0.0,
+//                                         offset: Offset(0.0,
+//                                             0.0), // shadow direction: bottom right
+//                                       )
+//                                     ],
+//                                   ),
+//                                   child: Icon(
+//                                     Icons.add,
+//                                     color: Colors.grey[800],
+//                                     size: 40,
+//                                   ),
+//                                 ),
+//                                 onTap: () async {
+//                                   ScaffoldMessenger.of(context)
+//                                       .showSnackBar(SnackBar(
+//                                     content: Text('Project is being created!'),
+//                                     duration: Duration(seconds: 2),
+//                                   ));
+//                                   final response = await projectCreator(
+//                                       projectName: projectNameController.text,
+//                                       projectDescription:
+//                                           projectDescriptionController.text,
+//                                       projectRepoLink:
+//                                           projectRepoLinkController.text,
+//                                       projectAdmin: currentUser.userID);
+
+//                                   String resultText =
+//                                       'Project could not be created!';
+
+//                                   if (response[0] == '200') {
+//                                     resultText = 'Project created!';
+//                                     Map responseJson = jsonDecode(response[1]);
+//                                     Project newProject = Project(
+//                                         projectID: responseJson['projectID'],
+//                                         projectName:
+//                                             responseJson['projectName'],
+//                                         projectCreatedOn:
+//                                             responseJson['projectCreatedOn'],
+//                                         projectRepoLink:
+//                                             responseJson['projectRepoLink'],
+//                                         projectAdmin:
+//                                             responseJson['projectAdmin'],
+//                                         projectDescription:
+//                                             responseJson['projectDescription']);
+//                                     setState(() {
+//                                       projectList.add(newProject);
+//                                     });
+//                                     Navigator.pop(context);
+//                                     projectNameController.text = '';
+//                                     projectDescriptionController.text = '';
+//                                     projectRepoLinkController.text = '';
+//                                   }
+//                                   ScaffoldMessenger.of(context)
+//                                       .showSnackBar(SnackBar(
+//                                     content: Text(resultText),
+//                                     duration: Duration(seconds: 4),
+//                                   ));
+//                                 },
+//                               ),
+//                             ),
+//                           ],
+//                         )),
+//                   ));
+//         },
+//       ),
+//       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+//     );

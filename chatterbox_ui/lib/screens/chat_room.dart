@@ -1,3 +1,4 @@
+import 'package:chatterbox_ui/models/globals.dart';
 import 'package:flutter/material.dart';
 
 class ChatRoom extends StatelessWidget {
@@ -5,7 +6,7 @@ class ChatRoom extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('Under construuciton'),
+        title: Text(currentChat.chatName),
       ),
     );
   }

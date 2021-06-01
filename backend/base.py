@@ -79,6 +79,73 @@ with app.app_context():
 # api.add_resource(UserProject, '/userprojects')
 
 
+#####################################################################################################################################
+
+
+
+
+
+class ChatDetails(db.Model):
+    chatID = db.Column(db.String, primary_key = True, nullable = False)
+    chatName = db.Column(db.String)
+    members = db.Column(db.String)
+
+    def toJSON(self):
+        return {
+            'chatID': self.chatID,
+            'chatName': self.chatName,
+            'members': self.members
+        }
+
+
+
+
+
+chatArgs = reqparse.RequestParser()
+chatArgs.add_argument('chatID', type = str, help = 'chatID not sent!')
+chatArgs.add_argument('chatName', type = str, help = 'chatName not sent!')
+chatArgs.add_argument('members', type = str, help = 'members not sent!')
+
+
+
+
+class Chats(Resource):
+
+    def put(self): #new chat
+        args = chatArgs.parse_args()
+        print(args)
+        chatID = 'CH_ID_' + ''.join(random.choices(string.ascii_uppercase + string.digits, k = 15))
+        newChat = ChatDetails(chatName = args['chatName'], chatID = chatID)
+
+        db.session.add(newChat)
+        db.session.commit()
+        return newChat.toJSON(), 200
+
+    def post(self): # retrieve chat
+        args = chatArgs.parse_args()
+        print(args)
+
+        retrieved_chat = ChatDetails.query.filter_by(chatID = args['chatID']).first()
+
+        if not retrieved_chat:
+            abort(404, message = 'Given chat not found')
+
+        print(retrieved_chat.toJSON())
+        return retrieved_chat.toJSON()
+
+
+
+
+
+
+
+api.add_resource(Chats, '/chatdetails')
+
+
+
+
+
+
 
 
 
@@ -102,6 +169,7 @@ class ProjectDetails(db.Model):
     projectAdmin = db.Column(db.String, nullable = False)
     projectMembers = db.Column(db.String)
     projectDescription = db.Column(db.String)
+    projectChatList = db.Column(db.String)
 
     def toJSON(self):
         return {
@@ -111,7 +179,8 @@ class ProjectDetails(db.Model):
             'projectRepoLink': self.projectRepoLink,
             'projectAdmin': self.projectAdmin,
             'projectMembers': self.projectMembers,
-            'projectDescription': self.projectDescription
+            'projectDescription': self.projectDescription,
+            'projectChatList': self.projectChatList
         }
 
 
@@ -120,20 +189,25 @@ class ProjectDetails(db.Model):
 
 projectDetailsArgs = reqparse.RequestParser()
 projectDetailsArgs.add_argument('projectID', type = str, help = 'projectID not sent!')
-projectDetailsArgs.add_argument('projectName', type = str, help = 'projectName not sent!', )
+projectDetailsArgs.add_argument('projectName', type = str, help = 'projectName not sent!')
 projectDetailsArgs.add_argument('projectRepoLink', type = str, help = 'projectRepoLink not sent!')
 projectDetailsArgs.add_argument('projectAdmin', type = str, help = 'projectAdmin not sent!')
 projectDetailsArgs.add_argument('projectMembers', type = str, help = 'projectMembers not sent!')
 projectDetailsArgs.add_argument('projectDescription', type = str, help = 'projectDescription not sent!')
+projectDetailsArgs.add_argument('projectChatList', type = str, help = 'projectChatList not sent!')
 
 
 
 
 class Projects(Resource):
 
-    def put(self): #new project
+    def put(self): #new project/updater
         args = projectDetailsArgs.parse_args()
         print(args)
+        project = ProjectDetails.query.filter_by(projectID = args['projectID']).first()
+        if project: #update project if it exists
+            return project.toJSON()
+
         projectCreatedOn = datetime.now().strftime('%B %d, %Y %H:%M')
         projectID = 'PR_ID_' + ''.join(random.choices(string.ascii_uppercase + string.digits, k = 15))
         newProject = ProjectDetails(projectName = args['projectName'], projectAdmin = args['projectAdmin'], projectRepoLink = args['projectRepoLink'], projectDescription = args['projectDescription'], projectID = projectID, projectCreatedOn = projectCreatedOn)
@@ -154,6 +228,25 @@ class Projects(Resource):
 
         print(retrieved_project.toJSON())
         return retrieved_project.toJSON()
+
+    def patch(self): #update chatlist
+        print(projectDetailsArgs.parse_args())
+        args = projectDetailsArgs.parse_args()
+        if not ProjectDetails.query.filter_by(projectID = args['projectID']).first(): #project doesnt exist
+            print('Project doesnt exist!')
+            abort(404, message = 'Project doesnt exist!')
+
+        print('Project exists!')
+
+        project = ProjectDetails.query.filter_by(projectID = args['projectID']).first()
+
+        print('Project retrieved!')
+
+        project.projectChatList += args['projectChatList'] + ','
+        db.session.commit()
+
+        return project.toJSON()
+
 
 
 

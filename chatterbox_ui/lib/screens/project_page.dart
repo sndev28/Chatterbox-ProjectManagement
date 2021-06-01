@@ -1,6 +1,9 @@
 import 'package:flutter/material.dart';
 import '../styles/font_styles.dart';
-import '../backend_supporters/globals.dart';
+import '../models/globals.dart';
+import 'sub_project_pages/chat_tab.dart';
+import 'sub_project_pages/tasks_tab.dart';
+import 'sub_project_pages/info_tab.dart';
 
 class ProjectPage extends StatefulWidget {
   @override
@@ -43,9 +46,9 @@ class _ProjectPageState extends State<ProjectPage> {
           ),
           body: Stack(children: [
             TabBarView(children: [
-              Container(),
-              Center(child: Text('Dam2')),
-              Center(child: Text('Dam3')),
+              ChatTab(),
+              TasksTab(),
+              InfoTab(),
             ]),
             Container(
               width: MediaQuery.of(context).size.width,
@@ -80,61 +83,4 @@ class _ProjectPageState extends State<ProjectPage> {
           ])),
     );
   }
-
-  // Widget _cardGenerator(Chat chat) {
-  //   String cardTitle = project.projectName;
-  //   String cardSubTitle = project.details();
-  //   String key = project.projectID;
-
-  //   return Padding(
-  //     key: Key(key),
-  //     padding: const EdgeInsets.only(top: 20),
-  //     child: InkWell(
-  //       child: Card(
-  //         elevation: 12,
-  //         color: Colors.red[400],
-  //         shape: RoundedRectangleBorder(
-  //             borderRadius: BorderRadius.all(Radius.circular(35))),
-  //         child: Container(
-  //           height: 120,
-  //           child: Padding(
-  //             padding: const EdgeInsets.only(left: 3, top: 20, bottom: 10),
-  //             child: Row(
-  //               mainAxisAlignment: MainAxisAlignment.start,
-  //               crossAxisAlignment: CrossAxisAlignment.stretch,
-  //               children: [
-  //                 Icon(
-  //                   Icons.drag_handle,
-  //                   color: Colors.red[200],
-  //                 ),
-  //                 Padding(
-  //                   padding: const EdgeInsets.only(left: 12, right: 125),
-  //                   child: Column(
-  //                     mainAxisAlignment: MainAxisAlignment.spaceBetween,
-  //                     crossAxisAlignment: CrossAxisAlignment.start,
-  //                     children: [
-  //                       Text(
-  //                         cardTitle,
-  //                         style: cardTitleTheme,
-  //                       ),
-  //                       Text(
-  //                         cardSubTitle,
-  //                         style: cardSubTitleTheme,
-  //                       ),
-  //                     ],
-  //                   ),
-  //                 ),
-  //                 Icon(Icons.arrow_forward_ios),
-  //               ],
-  //             ),
-  //           ),
-  //         ),
-  //       ),
-  //       onTap: () {
-  //         // currentProject = project;
-  //         // Navigator.pushNamed(context, projectDir);
-  //       },
-  //     ),
-  //   );
-  // }
 }

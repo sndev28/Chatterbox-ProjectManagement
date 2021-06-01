@@ -49,3 +49,10 @@ const TextStyle createProjectDialogueHeadingTheme = TextStyle(
   fontSize: 24.0,
   fontFamily: 'Pacifico',
 );
+
+const TextStyle chatCardSubTitleTheme = TextStyle(
+  color: greyFontColor,
+  fontWeight: FontWeight.w500,
+  fontSize: 22.0,
+  fontStyle: FontStyle.italic,
+);

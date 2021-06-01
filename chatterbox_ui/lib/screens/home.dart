@@ -6,7 +6,7 @@ import 'package:flutter/material.dart';
 import '../navigations.dart';
 import '../backend_supporters/connections.dart';
 import '../models/project.dart';
-import '../backend_supporters/globals.dart';
+import '../models/globals.dart';
 
 class Home extends StatefulWidget {
   @override
