@@ -5,15 +5,15 @@ import '../../navigations.dart';
 import '../../models/chat.dart';
 import '../../backend_supporters/connections.dart';
 import 'dart:convert';
-import 'package:after_layout/after_layout.dart';
 
 class ChatTab extends StatefulWidget {
   @override
   _ChatTabState createState() => _ChatTabState();
 }
 
-class _ChatTabState extends State<ChatTab> with AfterLayoutMixin<ChatTab> {
+class _ChatTabState extends State<ChatTab> {
   List<Chat> chatList = [];
+  bool chatsRetrieved = false;
 
   @override
   void initState() {
@@ -30,199 +30,234 @@ class _ChatTabState extends State<ChatTab> with AfterLayoutMixin<ChatTab> {
         Chat newChat = await retrieveChatFromID(chatID);
         chatList.add(newChat);
       }
-      setState(() {});
+      chatsRetrieved = true;
     }
-  }
-
-  @override
-  void afterFirstLayout(BuildContext context) {
-    chatInitializer();
   }
 
   @override
   Widget build(BuildContext context) {
     final TextEditingController chatNameController = TextEditingController();
-    return Scaffold(
-      floatingActionButton: FloatingActionButton(
-        shape: CircleBorder(side: BorderSide(color: Colors.transparent)),
-        foregroundColor: Colors.white,
-        backgroundColor: Colors.black38,
-        elevation: 4,
-        child: Center(
-          child: Icon(Icons.add, size: 50),
-        ),
-        onPressed: () {
-          showDialog(
-              context: context,
-              builder: (BuildContext context) => Dialog(
-                    shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.all(Radius.circular(10.0))),
-                    child: Container(
-                        height: 350,
-                        width: 100,
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Container(
-                              height: 300,
-                              width: 100,
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.stretch,
-                                children: [
-                                  Center(
-                                      child: Text(
-                                    'Create Project',
-                                    style: createProjectDialogueHeadingTheme,
-                                  )),
-                                  Padding(
-                                    padding: EdgeInsets.only(
-                                        top: 10, left: 10, right: 10),
-                                    child: TextField(
-                                      cursorColor: Colors.white,
-                                      controller: chatNameController,
-                                      decoration: InputDecoration(
-                                          border: UnderlineInputBorder(),
-                                          contentPadding: EdgeInsets.all(8.0),
-                                          labelText: 'Chat Name',
-                                          hintText: 'Enter chat name',
-                                          suffixIcon: Icon(Icons.edit)),
-                                    ),
-                                  ),
-                                ],
-                              ),
-                            ),
-                            Padding(
-                              padding: const EdgeInsets.only(bottom: 5),
-                              child: InkWell(
-                                child: Container(
-                                  decoration: BoxDecoration(
-                                    color: Colors.red[400],
-                                    shape: BoxShape.circle,
-                                    boxShadow: [
-                                      BoxShadow(
-                                        color: Colors.black,
-                                        blurRadius: 2.0,
-                                        spreadRadius: 0.0,
-                                        offset: Offset(0.0,
-                                            0.0), // shadow direction: bottom right
-                                      )
+    return FutureBuilder(
+        future: chatInitializer(),
+        builder: (context, snapshot) {
+          if (chatsRetrieved &&
+              snapshot.connectionState == ConnectionState.done) {
+            if (snapshot.hasError)
+              return Text(snapshot.error.toString());
+            else
+              return Scaffold(
+                floatingActionButton: FloatingActionButton(
+                  shape:
+                      CircleBorder(side: BorderSide(color: Colors.transparent)),
+                  foregroundColor: Colors.white,
+                  backgroundColor: Colors.black38,
+                  elevation: 4,
+                  child: Center(
+                    child: Icon(Icons.add, size: 50),
+                  ),
+                  onPressed: () {
+                    showDialog(
+                        context: context,
+                        builder: (BuildContext context) => Dialog(
+                              shape: RoundedRectangleBorder(
+                                  borderRadius:
+                                      BorderRadius.all(Radius.circular(10.0))),
+                              child: Container(
+                                  height: 350,
+                                  width: 100,
+                                  child: Column(
+                                    mainAxisAlignment:
+                                        MainAxisAlignment.spaceBetween,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.stretch,
+                                    children: [
+                                      Container(
+                                        height: 300,
+                                        width: 100,
+                                        child: Column(
+                                          crossAxisAlignment:
+                                              CrossAxisAlignment.stretch,
+                                          children: [
+                                            Center(
+                                                child: Text(
+                                              'Create Project',
+                                              style:
+                                                  createProjectDialogueHeadingTheme,
+                                            )),
+                                            Padding(
+                                              padding: EdgeInsets.only(
+                                                  top: 10, left: 10, right: 10),
+                                              child: TextField(
+                                                cursorColor: Colors.white,
+                                                controller: chatNameController,
+                                                decoration: InputDecoration(
+                                                    border:
+                                                        UnderlineInputBorder(),
+                                                    contentPadding:
+                                                        EdgeInsets.all(8.0),
+                                                    labelText: 'Chat Name',
+                                                    hintText: 'Enter chat name',
+                                                    suffixIcon:
+                                                        Icon(Icons.edit)),
+                                              ),
+                                            ),
+                                          ],
+                                        ),
+                                      ),
+                                      Padding(
+                                        padding:
+                                            const EdgeInsets.only(bottom: 5),
+                                        child: InkWell(
+                                          child: Container(
+                                            decoration: BoxDecoration(
+                                              color: Colors.red[400],
+                                              shape: BoxShape.circle,
+                                              boxShadow: [
+                                                BoxShadow(
+                                                  color: Colors.black,
+                                                  blurRadius: 2.0,
+                                                  spreadRadius: 0.0,
+                                                  offset: Offset(0.0,
+                                                      0.0), // shadow direction: bottom right
+                                                )
+                                              ],
+                                            ),
+                                            child: Icon(
+                                              Icons.add,
+                                              color: Colors.grey[800],
+                                              size: 40,
+                                            ),
+                                          ),
+                                          onTap: () async {
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(SnackBar(
+                                              content: Text(
+                                                  'Chat is being created!'),
+                                              duration: Duration(seconds: 2),
+                                            ));
+                                            final response = await chatCreator(
+                                                chatName:
+                                                    chatNameController.text);
+
+                                            String resultText =
+                                                'Chat could not be created!';
+
+                                            if (response[0] == '200') {
+                                              resultText = 'Chat created!';
+                                              Map responseJson =
+                                                  jsonDecode(response[1]);
+                                              Chat newChat = Chat(
+                                                  chatID:
+                                                      responseJson['chatID'],
+                                                  chatName:
+                                                      responseJson['chatName'],
+                                                  members:
+                                                      responseJson['members']);
+                                              setState(() {
+                                                chatList.add(newChat);
+                                              });
+                                              openData.put(
+                                                  newChat.chatID, <String>[]);
+                                              Navigator.pop(context);
+                                              chatNameController.text = '';
+                                            }
+                                            ScaffoldMessenger.of(context)
+                                                .showSnackBar(SnackBar(
+                                              content: Text(resultText),
+                                              duration: Duration(seconds: 4),
+                                            ));
+                                          },
+                                        ),
+                                      ),
                                     ],
-                                  ),
-                                  child: Icon(
-                                    Icons.add,
-                                    color: Colors.grey[800],
-                                    size: 40,
-                                  ),
-                                ),
-                                onTap: () async {
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(SnackBar(
-                                    content: Text('Chat is being created!'),
-                                    duration: Duration(seconds: 2),
-                                  ));
-                                  final response = await chatCreator(
-                                      chatName: chatNameController.text);
-
-                                  String resultText =
-                                      'Chat could not be created!';
-
-                                  if (response[0] == '200') {
-                                    resultText = 'Chat created!';
-                                    Map responseJson = jsonDecode(response[1]);
-                                    Chat newChat = Chat(
-                                        chatID: responseJson['chatID'],
-                                        chatName: responseJson['chatName']);
-                                    setState(() {
-                                      chatList.add(newChat);
-                                    });
-                                    Navigator.pop(context);
-                                    chatNameController.text = '';
-                                  }
-                                  ScaffoldMessenger.of(context)
-                                      .showSnackBar(SnackBar(
-                                    content: Text(resultText),
-                                    duration: Duration(seconds: 4),
-                                  ));
+                                  )),
+                            ));
+                  },
+                ),
+                body: Stack(
+                  children: [
+                    SingleChildScrollView(
+                      child: Column(
+                        children: [
+                          Padding(
+                            padding: const EdgeInsets.only(top: 80),
+                            child: ReorderableListView.builder(
+                                itemCount: chatList.length,
+                                primary: false,
+                                shrinkWrap: true,
+                                onReorder: (oldIndex, newIndex) {
+                                  setState(() {
+                                    if (newIndex > oldIndex) {
+                                      newIndex = newIndex - 1;
+                                    }
+                                    final element = chatList.removeAt(oldIndex);
+                                    chatList.insert(newIndex, element);
+                                  });
                                 },
-                              ),
-                            ),
-                          ],
-                        )),
-                  ));
-        },
-      ),
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            child: Column(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.only(top: 80),
-                  child: ReorderableListView.builder(
-                      itemCount: chatList.length,
-                      primary: false,
-                      shrinkWrap: true,
-                      onReorder: (oldIndex, newIndex) {
-                        setState(() {
-                          if (newIndex > oldIndex) {
-                            newIndex = newIndex - 1;
-                          }
-                          final element = chatList.removeAt(oldIndex);
-                          chatList.insert(newIndex, element);
-                        });
-                      },
-                      padding: EdgeInsets.all(16.0),
-                      itemBuilder: (context, index) =>
-                          _cardGenerator(chatList[index])),
-                ),
+                                padding: EdgeInsets.all(16.0),
+                                itemBuilder: (context, index) =>
+                                    _cardGenerator(chatList[index])),
+                          ),
 
-                // Center(
-                //   child: IconButton(
-                //       onPressed: () {
-                //         setState(() {});
-                //         ;
-                //       },
-                //       icon: Icon(
-                //         Icons.add,
-                //         color: Colors.white,
-                //       )),
-                // )
-              ],
-            ),
-          ),
-          Container(
-            width: MediaQuery.of(context).size.width,
-            height: 80,
-            decoration: BoxDecoration(
-              color: Colors.white,
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(30),
-                bottomRight: Radius.circular(30),
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black,
-                  blurRadius: 10.0,
-                  spreadRadius: 3.0,
-                  offset: Offset(2.0, 2.0), // shadow direction: bottom right
-                )
-              ],
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(left: 25, bottom: 7),
-                  child: Text('Projects', style: HomeUserStyle),
+                          // Center(
+                          //   child: IconButton(
+                          //       onPressed: () {
+                          //         setState(() {});
+                          //         ;
+                          //       },
+                          //       icon: Icon(
+                          //         Icons.add,
+                          //         color: Colors.white,
+                          //       )),
+                          // )
+                        ],
+                      ),
+                    ),
+                    Container(
+                      width: MediaQuery.of(context).size.width,
+                      height: 80,
+                      decoration: BoxDecoration(
+                        color: Colors.white,
+                        borderRadius: BorderRadius.only(
+                          bottomLeft: Radius.circular(30),
+                          bottomRight: Radius.circular(30),
+                        ),
+                        boxShadow: [
+                          BoxShadow(
+                            color: Colors.black,
+                            blurRadius: 10.0,
+                            spreadRadius: 3.0,
+                            offset: Offset(
+                                2.0, 2.0), // shadow direction: bottom right
+                          )
+                        ],
+                      ),
+                      child: Column(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        crossAxisAlignment: CrossAxisAlignment.stretch,
+                        children: [
+                          Padding(
+                            padding: EdgeInsets.only(left: 25, bottom: 7),
+                            child: Text('Projects', style: HomeUserStyle),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ],
                 ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
+              );
+          } else {
+            return Scaffold(
+              body: Center(
+                child: Container(
+                    width: MediaQuery.of(context).size.width / 2,
+                    child: Image.asset(
+                      'assets/images/meow.gif',
+                    )),
+              ),
+            );
+          }
+        });
   }
 
   Widget _cardGenerator(Chat chat) {
@@ -260,8 +295,12 @@ class _ChatTabState extends State<ChatTab> with AfterLayoutMixin<ChatTab> {
               Icons.arrow_forward_ios_outlined,
               color: Colors.grey[900],
             ),
-            onTap: () {
+            onTap: () async {
               currentChat = chat;
+              await SocketConnection.instance.sendMessage(messageEncoder(
+                  '_SystemMessage:NewChatOpened',
+                  currentChat.chatID,
+                  currentChat.members));
               Navigator.pushNamed(context, CHATDIR);
             },
           ),

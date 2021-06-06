@@ -127,6 +127,7 @@ Future<List<String>> chatCreator({String chatName = ''}) async {
     headers: {'Content-Type': 'application/json'},
     body: jsonEncode(<String, String>{
       'chatName': chatName,
+      'members': currentUser.userID + ','
     }),
   );
 

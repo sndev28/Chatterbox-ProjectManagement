@@ -31,8 +31,10 @@ dependencies:
   http: ^0.13.3
   intl: ^0.17.0
   after_layout: ^1.1.0
-  sqflite:
   path_provider:
+  hive:
+  hive_flutter:
+  chat_bubbles: ^1.0.0+3
 
 dev_dependencies:
   flutter_test:
@@ -85,3 +87,6 @@ flutter:
       fonts:
         - asset: fonts/Pacifico-Regular.ttf
           style: normal
+
+  assets:
+    - assets/images/meow.gif

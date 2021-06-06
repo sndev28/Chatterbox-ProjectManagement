@@ -1,3 +1,7 @@
+import 'package:chatterbox_ui/models/chat.dart';
+import 'package:chatterbox_ui/models/globals.dart';
+import 'package:chatterbox_ui/models/project.dart';
+import 'package:chatterbox_ui/models/user.dart';
 import 'package:flutter/material.dart';
 import '../styles/font_styles.dart';
 import '../navigations.dart';
@@ -90,6 +94,10 @@ class Settings extends StatelessWidget {
             onTap: () {
               Navigator.pushNamedAndRemoveUntil(
                   context, LOGINDIR, (_) => false);
+              SocketConnection.instance.closer();
+              currentChat = Chat();
+              currentProject = Project();
+              currentUser = User();
             },
           ),
         ));

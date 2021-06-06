@@ -49,4 +49,20 @@ class Project {
           this.projectCreatedOn;
     return 'Created On : ' + this.projectCreatedOn;
   }
+
+  String mindetails() {
+    if (this.projectDescription != '') {
+      if (this.projectDescription.length > 35) {
+        return this.projectDescription.substring(0, 35) +
+            '...' +
+            '\nCreated On : ' +
+            this.projectCreatedOn;
+      }
+      return this.projectDescription +
+          '\nCreated On : ' +
+          this.projectCreatedOn;
+    }
+
+    return 'Created On : ' + this.projectCreatedOn;
+  }
 }

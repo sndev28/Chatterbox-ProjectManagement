@@ -2,7 +2,7 @@ import requests
 import json
 
 
-BASE_URI = 'http://127.0.0.1:5000/'
+BASE_URI = 'http://192.168.1.34:5000/'
 
 # data = {
 #     'projectID': 'PR_ID_ZJCBK8SIK2W1LAL',

@@ -56,3 +56,9 @@ const TextStyle chatCardSubTitleTheme = TextStyle(
   fontSize: 22.0,
   fontStyle: FontStyle.italic,
 );
+
+const TextStyle HomeChatStyle = TextStyle(
+  fontSize: 35,
+  color: Colors.white,
+  fontFamily: 'Pacifico',
+);

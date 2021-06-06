@@ -7,7 +7,7 @@ from datetime import datetime
 import random
 import string
 from requests import NullHandler
-
+import time
 from sqlalchemy.sql.elements import Null
 
 
@@ -115,7 +115,7 @@ class Chats(Resource):
         args = chatArgs.parse_args()
         print(args)
         chatID = 'CH_ID_' + ''.join(random.choices(string.ascii_uppercase + string.digits, k = 15))
-        newChat = ChatDetails(chatName = args['chatName'], chatID = chatID)
+        newChat = ChatDetails(chatName = args['chatName'], chatID = chatID, members = args['members'])
 
         db.session.add(newChat)
         db.session.commit()
@@ -241,8 +241,10 @@ class Projects(Resource):
         project = ProjectDetails.query.filter_by(projectID = args['projectID']).first()
 
         print('Project retrieved!')
-
-        project.projectChatList += args['projectChatList'] + ','
+        
+        if  project.projectChatList == None:
+            project.projectChatList = args['projectChatList'] + ','
+        else: project.projectChatList += args['projectChatList'] + ','
         db.session.commit()
 
         return project.toJSON()
