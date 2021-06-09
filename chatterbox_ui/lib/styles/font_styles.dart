@@ -62,3 +62,9 @@ const TextStyle HomeChatStyle = TextStyle(
   color: Colors.white,
   fontFamily: 'Pacifico',
 );
+
+const TextStyle dropDownTextStyle = TextStyle(
+  fontSize: 16,
+  color: greyFontColor,
+  fontFamily: 'Pacifico',
+);

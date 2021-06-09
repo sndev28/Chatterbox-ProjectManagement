@@ -16,9 +16,11 @@ Project currentProject = Project(
     projectAdmin: '',
     projectDescription: '');
 
-List<String> currentProjectMembersList = [];
+List<User> currentProjectMembersList = [];
 
 Chat currentChat = Chat(chatID: '', chatName: '', members: '');
+
+List searchMatches = [];
 
 late Box openData;
 
@@ -42,16 +44,12 @@ class SocketConnection {
 
     socket.listen((event) {
       String message = utf8.decode(event);
-      print(
-          'MESSSSSAAAAAAAAAAAAAAAAAAAAAGGGGGGGGGGGGGGGGGGGGGGGEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE  : ' +
-              message);
       Map decodedMessage = json.decode(message);
 
       if (decodedMessage['chatID'] == '_SystemMessage') {
         print('System message :' + decodedMessage['message']);
       } else if (decodedMessage['chatID'] == '_SystemMessage:_releaseQueue') {
         if (decodedMessage['message'] == 'START') {
-          print('RELAEASING QUEUEUE TRUEEUEUEUEUUEUE');
           releasingQueue = true;
           sendMessage(messageEncoder(
               '_SystemMessage:_releaseQueue', 'system', '_releaseQueue'));
@@ -71,7 +69,6 @@ class SocketConnection {
         previousMessages.add(message);
         openData.put(decodedMessage['chatID'], previousMessages);
         if (releasingQueue) {
-          print('NEXTTTT');
           sendMessage(messageEncoder(
               '_SystemMessage:_releaseQueue', 'system', '_releaseQueueNext'));
         }
@@ -99,14 +96,3 @@ String messageEncoder(chatID, userID, message) {
       '"$message"' +
       '}';
 }
-// class ChatDatabase {
-//   ChatDatabase._privateConstructor();
-//   static final ChatDatabase instance = ChatDatabase._privateConstructor();
-
-//   static Database _database;
-
-//   Future<Database> get database async {
-//     if (_database != null) return _database;
-//     _database = await _initiate
-//   }
-// }

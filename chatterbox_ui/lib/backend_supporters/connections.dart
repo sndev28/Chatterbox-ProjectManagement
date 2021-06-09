@@ -1,4 +1,5 @@
 import 'package:chatterbox_ui/models/globals.dart';
+import 'package:chatterbox_ui/models/user.dart';
 import '../models/project.dart';
 import 'package:http/http.dart';
 import 'dart:convert';
@@ -22,6 +23,7 @@ Future<int> newUserRegister(String username, String password) async {
     body: jsonEncode(<String, String>{
       'username': username,
       'password': password,
+      'updateCommand': 'newUserRegister',
     }),
   );
   return response.statusCode;
@@ -33,8 +35,7 @@ Future<List> retrieveUserFromID(String userID) async {
     headers: {'Content-Type': 'application/json'},
     body: jsonEncode(<String, String>{
       'userID': userID,
-      'username': '_System:retrieveFromID',
-      'password': 'dummy'
+      'updateCommand': 'retrieveUserFromID',
     }),
   );
   return [response.statusCode.toString(), response.body];
@@ -49,7 +50,7 @@ Future<List<String>> userLogin(String username, String password) async {
       'password': password,
     }),
   );
-
+  print('I AM HERE' + response.body);
   return [response.statusCode.toString(), response.body];
 }
 
@@ -59,6 +60,7 @@ void userUpdate() async {
     headers: {'Content-Type': 'application/json'},
     body: jsonEncode(<String, String>{
       'username': currentUser.username,
+      'updateCommand': 'retrieveUserFromID',
     }),
   );
 
@@ -176,4 +178,90 @@ Future<Chat> retrieveChatFromID(String chatID) async {
   retrievedChat.initializeFromJSON(response.body);
 
   return retrievedChat;
+}
+
+Future<void> memberDelete({String userID = '', String username = ''}) async {
+  Response response;
+  if (userID != '')
+    response = await delete(projectUri,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(<String, String>{
+          'projectID': currentProject.projectID,
+          'projectMembers': userID,
+          'updateCommand': 'userID',
+        }));
+  else
+    response = await delete(projectUri,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(<String, String>{
+          'projectID': currentProject.projectID,
+          'projectMembers': username,
+          'updateCommand': 'username',
+        }));
+
+  currentProject.initializeFromJSON(response.body);
+
+  List currentProjectMembersIDsList = currentProject.projectMembers.split(',');
+  currentProjectMembersList = [];
+  for (var memberID in currentProjectMembersIDsList) {
+    User tempUser = User();
+    if (memberID != '' && memberID != ' ') {
+      final response = await retrieveUserFromID(memberID);
+      if (int.parse(response[0]) == 200) {
+        tempUser.initializeFromJSON(response[1]);
+        currentProjectMembersList.add(tempUser);
+      }
+    }
+  }
+}
+
+Future<void> memberAdd({String userID = '', String username = ''}) async {
+  Response response;
+  if (userID != '')
+    response = await patch(projectUri,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(<String, String>{
+          'projectID': currentProject.projectID,
+          'projectMembers': userID,
+          'updateCommand': 'members_userID',
+        }));
+  else
+    response = await patch(projectUri,
+        headers: {'Content-Type': 'application/json'},
+        body: json.encode(<String, String>{
+          'projectID': currentProject.projectID,
+          'projectMembers': username,
+          'updateCommand': 'members_username',
+        }));
+
+  currentProject.initializeFromJSON(response.body);
+
+  List currentProjectMembersIDsList = currentProject.projectMembers.split(',');
+  currentProjectMembersList = [];
+  for (var memberID in currentProjectMembersIDsList) {
+    User tempUser = User();
+    if (memberID != '' && memberID != ' ') {
+      final response = await retrieveUserFromID(memberID);
+      if (int.parse(response[0]) == 200) {
+        tempUser.initializeFromJSON(response[1]);
+        currentProjectMembersList.add(tempUser);
+      }
+    }
+  }
+}
+
+memberSearch(String username) async {
+  Response response = await post(
+    userUri,
+    headers: {'Content-Type': 'application/json'},
+    body: json.encode(
+        <String, String>{'username': username, 'updateCommand': 'checkLike'}),
+  );
+
+  if (response.statusCode == 404) {
+    searchMatches = [];
+  } else {
+    searchMatches = json.decode(response.body)['matches'].split(',');
+    searchMatches.removeWhere((element) => element == '');
+  }
 }

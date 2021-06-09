@@ -18,12 +18,16 @@ class _ProjectSettingsMembersPageState extends State<ProjectSettingsMembersPage>
   late Animation _animation;
   late AnimationController _controller;
   late AsyncMemoizer memoizer;
+  TextEditingController searchController = TextEditingController();
 
   late Future test;
 
   double _sizeOfSearch = 0;
+  double ifTextChanged = 0;
 
   bool membersRetrieved = false;
+  bool searchOpened = false;
+  double heightOfDropdown = 150;
 
   @override
   void initState() {
@@ -43,9 +47,9 @@ class _ProjectSettingsMembersPageState extends State<ProjectSettingsMembersPage>
 
   @override
   void dispose() {
-    // TODO: implement dispose
     super.dispose();
     _controller.dispose();
+    searchController.dispose();
   }
 
   @override
@@ -63,14 +67,14 @@ class _ProjectSettingsMembersPageState extends State<ProjectSettingsMembersPage>
                   elevation: 0,
                   backgroundColor: Colors.white,
                   foregroundColor: Colors.white,
-                  actions: [
-                    IconButton(
-                      icon: Icon(Icons.search_sharp),
-                      onPressed: () {
-                        print('To Be added');
-                      },
-                    )
-                  ],
+                  // actions: [
+                  //   IconButton(
+                  //     icon: Icon(Icons.search_sharp),
+                  //     onPressed: () {
+                  //       print('To Be added');
+                  //     },
+                  //   )
+                  // ],
                   leading: IconButton(
                     icon:
                         Icon(Icons.arrow_back_ios_new, color: Colors.grey[900]),
@@ -103,76 +107,196 @@ class _ProjectSettingsMembersPageState extends State<ProjectSettingsMembersPage>
                                 borderRadius:
                                     BorderRadius.all(Radius.circular(100)),
                               ),
-                              child: Row(
-                                mainAxisAlignment: MainAxisAlignment.center,
-                                crossAxisAlignment: CrossAxisAlignment.center,
+                              child: Column(
                                 children: [
-                                  InkWell(
-                                    onTap: () {
-                                      _controller.forward();
-                                    },
-                                    child: Container(
-                                      width: 40,
-                                      height: 40,
-                                      decoration: BoxDecoration(
-                                        color: Colors.red[400],
-                                        borderRadius: BorderRadius.only(
-                                          topLeft: Radius.circular(80),
-                                          bottomLeft: Radius.circular(80),
+                                  Row(
+                                    mainAxisAlignment: MainAxisAlignment.center,
+                                    crossAxisAlignment:
+                                        CrossAxisAlignment.center,
+                                    children: [
+                                      InkWell(
+                                        onTap: () {
+                                          searchOpened
+                                              ? memberSearch(
+                                                  searchController.text)
+                                              : _controller.forward();
+                                        },
+                                        child: Container(
+                                          width: 40,
+                                          height: 40,
+                                          decoration: BoxDecoration(
+                                            color: Colors.red[400],
+                                            borderRadius: BorderRadius.only(
+                                              topLeft: Radius.circular(80),
+                                              bottomLeft: Radius.circular(80),
+                                            ),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                blurRadius: 0,
+                                                spreadRadius:
+                                                    0, // shadow direction: bottom right
+                                              )
+                                            ],
+                                          ),
+                                          child: Icon(
+                                            Icons.search_sharp,
+                                            color: Colors.grey[900],
+                                          ),
                                         ),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            blurRadius: 0,
-                                            spreadRadius:
-                                                0, // shadow direction: bottom right
-                                          )
-                                        ],
                                       ),
-                                      child: Icon(
-                                        Icons.search_sharp,
-                                        color: Colors.grey[900],
+                                      Container(
+                                        height: 40,
+                                        width: _sizeOfSearch,
+                                        decoration: BoxDecoration(
+                                          color: Colors.white,
+                                          boxShadow: [
+                                            BoxShadow(
+                                              blurRadius: 0,
+                                              spreadRadius:
+                                                  0, // shadow direction: bottom right
+                                            )
+                                          ],
+                                        ),
+                                        child: Expanded(
+                                            child: TextField(
+                                          controller: searchController,
+                                          onChanged: (changedString) async {
+                                            if (changedString.isEmpty)
+                                              ifTextChanged = 0;
+                                            else {
+                                              ifTextChanged = heightOfDropdown;
+                                              await memberSearch(changedString);
+                                            }
+                                            setState(() {});
+                                          },
+                                        )),
                                       ),
-                                    ),
+                                      InkWell(
+                                        onTap: () {
+                                          searchOpened
+                                              ? _controller.reverse()
+                                              : _controller.forward();
+                                        },
+                                        child: Container(
+                                          width: 40,
+                                          height: 40,
+                                          decoration: BoxDecoration(
+                                            color: Colors.red[400],
+                                            borderRadius: BorderRadius.only(
+                                              topRight: Radius.circular(80),
+                                              bottomRight: Radius.circular(80),
+                                            ),
+                                            boxShadow: [
+                                              BoxShadow(
+                                                blurRadius: 0,
+                                                spreadRadius:
+                                                    0, // shadow direction: bottom right
+                                              )
+                                            ],
+                                          ),
+                                          child: searchOpened
+                                              ? Icon(
+                                                  Icons
+                                                      .arrow_back_ios_new_sharp,
+                                                  color: Colors.grey[900],
+                                                )
+                                              : Icon(
+                                                  Icons.group_add_outlined,
+                                                  color: Colors.grey[900],
+                                                ),
+                                        ),
+                                      ),
+                                    ],
                                   ),
                                   Container(
-                                    height: 40,
+                                    color: Colors.white,
                                     width: _sizeOfSearch,
-                                    decoration: BoxDecoration(
-                                      color: Colors.white,
-                                      boxShadow: [
-                                        BoxShadow(
-                                          blurRadius: 0,
-                                          spreadRadius:
-                                              0, // shadow direction: bottom right
-                                        )
-                                      ],
-                                    ),
-                                  ),
-                                  InkWell(
-                                    onTap: () {
-                                      _controller.reverse();
-                                    },
-                                    child: Container(
-                                      width: 40,
-                                      height: 40,
-                                      decoration: BoxDecoration(
-                                        color: Colors.red[400],
-                                        borderRadius: BorderRadius.only(
-                                          topRight: Radius.circular(80),
-                                          bottomRight: Radius.circular(80),
-                                        ),
-                                        boxShadow: [
-                                          BoxShadow(
-                                            blurRadius: 0,
-                                            spreadRadius:
-                                                0, // shadow direction: bottom right
-                                          )
-                                        ],
-                                      ),
-                                      child: Icon(
-                                        Icons.group_add_outlined,
-                                        color: Colors.grey[900],
-                                      ),
+                                    height: ifTextChanged,
+                                    child: ListView.builder(
+                                      padding: EdgeInsets.only(top: 10),
+                                      primary: false,
+                                      shrinkWrap: true,
+                                      itemCount: searchMatches.length,
+                                      itemBuilder: (context, index) {
+                                        bool exists = false;
+                                        List usernames = [
+                                          for (var user
+                                              in currentProjectMembersList)
+                                            user.username
+                                        ];
+                                        if (usernames
+                                            .contains(searchMatches[index]))
+                                          exists = true;
+                                        return Container(
+                                          height: 40,
+                                          decoration: BoxDecoration(
+                                              color: index % 2 == 1
+                                                  ? Colors.grey[200]
+                                                  : Colors.white),
+                                          child: Row(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
+                                            crossAxisAlignment:
+                                                CrossAxisAlignment.center,
+                                            children: [
+                                              Padding(
+                                                padding:
+                                                    const EdgeInsets.symmetric(
+                                                        horizontal: 10),
+                                                child: Text(
+                                                  searchMatches[index],
+                                                  style: dropDownTextStyle,
+                                                ),
+                                              ),
+                                              exists
+                                                  ? IconButton(
+                                                      icon: Icon(
+                                                        Icons.delete_outline,
+                                                        color: Colors.grey[900],
+                                                      ),
+                                                      onPressed: () async {
+                                                        ScaffoldMessenger.of(
+                                                                context)
+                                                            .showSnackBar(
+                                                                SnackBar(
+                                                          content: Text(
+                                                              'Deletion under progress!'),
+                                                          duration: Duration(
+                                                              seconds: 4),
+                                                        ));
+                                                        await memberDelete(
+                                                            username:
+                                                                searchMatches[
+                                                                    index]);
+                                                        setState(() {});
+                                                      },
+                                                    )
+                                                  : IconButton(
+                                                      icon: Icon(
+                                                        Icons.add,
+                                                        color: Colors.grey[900],
+                                                      ),
+                                                      onPressed: () async {
+                                                        ScaffoldMessenger.of(
+                                                                context)
+                                                            .showSnackBar(
+                                                                SnackBar(
+                                                          content: Text(
+                                                              'Adding member!'),
+                                                          duration: Duration(
+                                                              seconds: 4),
+                                                        ));
+                                                        await memberAdd(
+                                                            username:
+                                                                searchMatches[
+                                                                    index]);
+                                                        setState(() {});
+                                                      },
+                                                    ),
+                                            ],
+                                          ),
+                                        );
+                                      },
                                     ),
                                   ),
                                 ],
@@ -185,17 +309,6 @@ class _ProjectSettingsMembersPageState extends State<ProjectSettingsMembersPage>
                                 itemCount: currentProjectMembersList.length,
                                 primary: false,
                                 shrinkWrap: true,
-                                padding: EdgeInsets.all(16.0),
-                                itemBuilder: (context, index) => _cardGenerator(
-                                    currentProjectMembersList[index])),
-                          ),
-                          Padding(
-                            padding: const EdgeInsets.only(top: 80),
-                            child: ListView.builder(
-                                itemCount: currentProjectMembersList.length,
-                                primary: false,
-                                shrinkWrap: true,
-                                padding: EdgeInsets.all(16.0),
                                 itemBuilder: (context, index) => _cardGenerator(
                                     currentProjectMembersList[index])),
                           ),
@@ -255,20 +368,21 @@ class _ProjectSettingsMembersPageState extends State<ProjectSettingsMembersPage>
         List currentProjectMembersIDsList =
             currentProject.projectMembers.split(',');
         currentProjectMembersList = [];
-        User tempUser = User();
+
         for (var memberID in currentProjectMembersIDsList) {
+          User tempUser = User();
           if (memberID != '' && memberID != ' ') {
             final response = await retrieveUserFromID(memberID);
             if (int.parse(response[0]) == 200) {
               tempUser.initializeFromJSON(response[1]);
-              currentProjectMembersList.add(tempUser.username);
+              currentProjectMembersList.add(tempUser);
             }
           }
         }
         membersRetrieved = true;
       });
 
-  Widget _cardGenerator(String memberName) {
+  Widget _cardGenerator(User member) {
     return Padding(
         padding: EdgeInsets.fromLTRB(8, 4, 8, 8),
         child: Card(
@@ -278,15 +392,20 @@ class _ProjectSettingsMembersPageState extends State<ProjectSettingsMembersPage>
               borderRadius: BorderRadius.all(Radius.circular(12))),
           child: ListTile(
             title: Text(
-              memberName,
+              member.username,
               style: bodyTheme,
             ),
             trailing: Icon(
               Icons.delete_outlined,
               color: Colors.grey[900],
             ),
-            onTap: () {
-              print('Delete..!?');
+            onTap: () async {
+              ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                content: Text('Deletion under progress!'),
+                duration: Duration(seconds: 4),
+              ));
+              await memberDelete(userID: member.userID);
+              setState(() {});
             },
           ),
         ));

@@ -129,8 +129,10 @@ class LoginScreen extends StatelessWidget {
 
                                   switch (statusCode) {
                                     case 200:
+                                      print('meh');
                                       currentUser
                                           .initializeFromJSON(response[1]);
+                                      print('meh2');
                                       snackbarString = 'Please wait...';
                                       break;
                                     case 404:
