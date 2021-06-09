@@ -27,6 +27,19 @@ Future<int> newUserRegister(String username, String password) async {
   return response.statusCode;
 }
 
+Future<List> retrieveUserFromID(String userID) async {
+  Response response = await post(
+    userUri,
+    headers: {'Content-Type': 'application/json'},
+    body: jsonEncode(<String, String>{
+      'userID': userID,
+      'username': '_System:retrieveFromID',
+      'password': 'dummy'
+    }),
+  );
+  return [response.statusCode.toString(), response.body];
+}
+
 Future<List<String>> userLogin(String username, String password) async {
   Response response = await put(
     userUri,
@@ -109,12 +122,13 @@ Future<Project> retrieveProjectFromID(String projectID) async {
   print(response.body);
 
   Project retrievedProject = Project(
-      projectID: '',
-      projectName: '',
-      projectCreatedOn: '',
-      projectRepoLink: '',
-      projectAdmin: '',
-      projectDescription: '');
+    projectID: '',
+    projectName: '',
+    projectCreatedOn: '',
+    projectRepoLink: '',
+    projectAdmin: '',
+    projectDescription: '',
+  );
 
   retrievedProject.initializeFromJSON(response.body);
 

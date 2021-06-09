@@ -1,3 +1,8 @@
+import 'package:chatterbox_ui/screens/sub_project_pages/project_settings_page.dart';
+import 'package:chatterbox_ui/screens/sub_project_settings/chats_settings.dart';
+import 'package:chatterbox_ui/screens/sub_project_settings/member_settings.dart';
+import 'package:chatterbox_ui/screens/sub_project_settings/project_settings.dart';
+import 'package:chatterbox_ui/screens/sub_project_settings/tasks_settings.dart';
 import 'package:flutter/material.dart';
 import 'screens/home.dart';
 import 'navigations.dart';
@@ -62,8 +67,28 @@ class _ChatterBoxState extends State<ChatterBox> {
           screen = ProjectPage();
           break;
 
+        case projectSettingsDir:
+          screen = ProjectSettingsPage();
+          break;
+
         case chatSettings:
           screen = ChatSettingsPage();
+          break;
+
+        case projectSettingsProject:
+          screen = ProjectSettingsProjectPage();
+          break;
+
+        case projectSettingsMembers:
+          screen = ProjectSettingsMembersPage();
+          break;
+
+        case projectSettingsTasks:
+          screen = ProjectSettingsTasksPage();
+          break;
+
+        case projectSettingsChats:
+          screen = ProjectSettingsChatsPage();
           break;
 
         default:

@@ -2,7 +2,7 @@ import requests
 import json
 
 
-BASE_URI = 'http://192.168.1.34:5000/'
+BASE_URI = 'http://192.168.1.36:5000/'
 
 # data = {
 #     'projectID': 'PR_ID_ZJCBK8SIK2W1LAL',
@@ -21,10 +21,11 @@ BASE_URI = 'http://192.168.1.34:5000/'
 #     }
 
 data = {
-    'userID' : 'Damn yousdsd',
-    'projects': ',aiufehbiaubhf'
+    'userID' : 'USER_ID_EBWCNPPVM00HSRR',
+    'username': '_System:retrieveFromID',
+    'password': 'dummy' 
 }
 
-response = requests.get(BASE_URI + 'userprojects', data=data)
+response = requests.post(BASE_URI + 'user', data=data)
 
 print(response.text)

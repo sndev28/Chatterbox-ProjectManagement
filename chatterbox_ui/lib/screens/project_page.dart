@@ -1,3 +1,4 @@
+import 'package:chatterbox_ui/navigations.dart';
 import 'package:flutter/material.dart';
 import '../styles/font_styles.dart';
 import '../models/globals.dart';
@@ -32,7 +33,7 @@ class _ProjectPageState extends State<ProjectPage> {
               IconButton(
                 icon: Icon(Icons.settings_outlined, color: Colors.grey[900]),
                 onPressed: () {
-                  // Navigator.pushNamed(context, SETTINGSDIR);
+                  Navigator.pushNamed(context, projectSettingsDir);
                 },
               ),
             ],

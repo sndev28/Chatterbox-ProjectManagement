@@ -28,57 +28,6 @@ with app.app_context():
 
 
 
-# class UserProjectDetails(db.Model):
-#     userID = db.Column(db.String, primary_key = True, nullable = False)
-#     projects = db.Column(db.String)
-
-#     def __repr__(self):
-#         return {self.userID : self.projects}
-
-
-
-# userProjectDetailsArgs = reqparse.RequestParser()
-# userProjectDetailsArgs.add_argument('userID', type = str, help = 'userID not sent!')
-# userProjectDetailsArgs.add_argument('projects', type = str, help = 'project IDs not sent!')
-
-
-# class UserProject(Resource):
-#     def get(self):
-#         args = userProjectDetailsArgs.parse_args()
-#         retrieved_user = UserProjectDetails.query.filter_by(userID = args['userID']).first()
-#         if not retrieved_user:
-#             return 'No such user exists!'
-
-#         return retrieved_user.__repr__()
-
-
-#     def put(self):
-#         args = userProjectDetailsArgs.parse_args()
-#         retrieved_user = UserProjectDetails.query.filter_by(userID = args['userID']).first()
-#         if not retrieved_user:
-#             new_user = UserProjectDetails(userID = args['userID'], projects = '')
-#             db.session.add(new_user)
-#             db.session.commit()
-
-#             return 'New user created'
-#         return 'User already exists'
-
-
-#     def patch(self):
-#         args = userProjectDetailsArgs.parse_args()
-#         retrieved_user = UserProjectDetails.query.filter_by(userID = args['userID']).first()
-#         if not retrieved_user:
-#             return 'No such user exists!'
-
-#         retrieved_user.projects += args['projects']
-#         db.session.commit()
-#         return 'Project list updated'
-
-
-
-# api.add_resource(UserProject, '/userprojects')
-
-
 #####################################################################################################################################
 
 
@@ -310,6 +259,7 @@ user_args = reqparse.RequestParser()
 user_args.add_argument('username', type = str, help = 'No username was sent!', required = True)
 user_args.add_argument('password', type = str, help = 'Password empty!', required = True)
 user_args.add_argument('projects', type = str, help = 'Project empty!', required = False)
+user_args.add_argument('userID', type = str, help = 'userID empty!', required = False)
 
 
 
@@ -328,7 +278,16 @@ class User(Resource):
         
     def post(self): #register/updater
         args = user_args.parse_args()
+
+        if args['username'] == '_System:retrieveFromID':
+            try:
+                user = UserDetails.query.filter_by(userID = args['userID']).first()
+                return user.toJSON()
+            except:
+                pass
+
         user = UserDetails.query.filter_by(username = args['username']).first()
+
         if user: #username already taken
             return user.toJSON()
 

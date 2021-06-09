@@ -129,15 +129,15 @@ class _ChatroomState extends State<Chatroom> {
                         icon: Icon(Icons.send_outlined),
                         onPressed: () {
                           if (messageController.text != '') {
-                            List previous = openData.get(currentChat.chatID);
+                            // List previous = openData.get(currentChat.chatID);
                             String encodedMessage = messageEncoder(
                                 currentChat.chatID,
                                 currentUser.userID,
                                 messageController.text);
                             SocketConnection.instance
                                 .sendMessage(encodedMessage);
-                            previous.add(encodedMessage);
-                            openData.put(currentChat.chatID, previous);
+                            // previous.add(encodedMessage);
+                            // openData.put(currentChat.chatID, previous);
                             messageController.text = '';
                           }
 

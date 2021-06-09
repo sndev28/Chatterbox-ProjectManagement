@@ -16,7 +16,7 @@ Project currentProject = Project(
     projectAdmin: '',
     projectDescription: '');
 
-List<String> currentChatMembersList = [];
+List<String> currentProjectMembersList = [];
 
 Chat currentChat = Chat(chatID: '', chatName: '', members: '');
 
@@ -42,29 +42,38 @@ class SocketConnection {
 
     socket.listen((event) {
       String message = utf8.decode(event);
+      print(
+          'MESSSSSAAAAAAAAAAAAAAAAAAAAAGGGGGGGGGGGGGGGGGGGGGGGEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEEE  : ' +
+              message);
       Map decodedMessage = json.decode(message);
 
       if (decodedMessage['chatID'] == '_SystemMessage') {
         print('System message :' + decodedMessage['message']);
       } else if (decodedMessage['chatID'] == '_SystemMessage:_releaseQueue') {
-        if (decodedMessage['message'] == 'START')
+        if (decodedMessage['message'] == 'START') {
+          print('RELAEASING QUEUEUE TRUEEUEUEUEUUEUE');
           releasingQueue = true;
-        else if (decodedMessage['message'] == 'END') releasingQueue = false;
+          sendMessage(messageEncoder(
+              '_SystemMessage:_releaseQueue', 'system', '_releaseQueue'));
+        } else if (decodedMessage['message'] == 'END') {
+          releasingQueue = false;
+          print(releasingQueue);
+        }
       } else if (openData.containsKey(decodedMessage['chatID']) == false) {
         List previousMessages = [];
         previousMessages = openData.get(decodedMessage['chatID']);
         previousMessages.add(message);
         openData.put(decodedMessage['chatID'], previousMessages);
       } else {
-        if (decodedMessage['userID'] != currentUser.userID) {
-          List previousMessages = [];
-          if (openData.get(decodedMessage['chatID']) != null)
-            previousMessages = openData.get(decodedMessage['chatID']);
-          previousMessages.add(message);
-          openData.put(decodedMessage['chatID'], previousMessages);
-          if (releasingQueue)
-            sendMessage(messageEncoder(
-                '_SystemMessage:_releaseQueue', 'system', '_releaseQueueNext'));
+        List previousMessages = [];
+        if (openData.get(decodedMessage['chatID']) != null)
+          previousMessages = openData.get(decodedMessage['chatID']);
+        previousMessages.add(message);
+        openData.put(decodedMessage['chatID'], previousMessages);
+        if (releasingQueue) {
+          print('NEXTTTT');
+          sendMessage(messageEncoder(
+              '_SystemMessage:_releaseQueue', 'system', '_releaseQueueNext'));
         }
       }
     });
