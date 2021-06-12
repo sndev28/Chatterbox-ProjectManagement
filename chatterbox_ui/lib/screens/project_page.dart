@@ -19,30 +19,34 @@ class _ProjectPageState extends State<ProjectPage> {
       child: Scaffold(
           appBar: AppBar(
             elevation: 0,
-            backgroundColor: Colors.white,
-            foregroundColor: Colors.white,
+            backgroundColor: currentTheme.secondaryColor,
+            foregroundColor: currentTheme.secondaryColor,
             leading: IconButton(
                 onPressed: () {
                   Navigator.pop(context);
                 },
                 icon: Icon(
                   Icons.arrow_back_ios,
-                  color: Colors.grey[900],
+                  color: currentTheme.backgroundColor,
                 )),
             actions: [
               IconButton(
-                icon: Icon(Icons.settings_outlined, color: Colors.grey[900]),
+                icon: Icon(Icons.settings_outlined,
+                    color: currentTheme.backgroundColor),
                 onPressed: () {
-                  Navigator.pushNamed(context, projectSettingsDir);
+                  Navigator.pushNamed(context, projectSettingsDir)
+                      .then((value) async {
+                    setState(() {});
+                  });
                 },
               ),
             ],
           ),
           bottomNavigationBar: TabBar(
             tabs: [
-              Icon(Icons.chat_outlined),
-              Icon(Icons.account_tree_outlined),
-              Icon(Icons.info_outline_rounded),
+              Container(height: 35, child: Icon(Icons.chat_outlined)),
+              Container(height: 35, child: Icon(Icons.account_tree_outlined)),
+              Container(height: 35, child: Icon(Icons.info_outline_rounded)),
             ],
           ),
           body: Stack(children: [
@@ -55,7 +59,7 @@ class _ProjectPageState extends State<ProjectPage> {
               width: MediaQuery.of(context).size.width,
               height: 80,
               decoration: BoxDecoration(
-                color: Colors.white,
+                color: currentTheme.secondaryColor,
                 borderRadius: BorderRadius.only(
                   bottomLeft: Radius.circular(30),
                   bottomRight: Radius.circular(30),
@@ -76,7 +80,7 @@ class _ProjectPageState extends State<ProjectPage> {
                   Padding(
                     padding: EdgeInsets.only(bottom: 7),
                     child:
-                        Text(currentProject.projectName, style: HomeUserStyle),
+                        Text(currentProject.projectName, style: homeUserStyle),
                   ),
                 ],
               ),

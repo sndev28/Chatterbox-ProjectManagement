@@ -1,6 +1,5 @@
 import 'dart:convert';
 import 'package:hive/hive.dart';
-import 'package:intl/intl.dart';
 import '../styles/font_styles.dart';
 import 'package:flutter/material.dart';
 import '../navigations.dart';
@@ -30,22 +29,22 @@ class _HomeState extends State<Home> {
   }
 
   projectInitializer() async {
-    var now = DateTime.now();
-    String dmCreationTime = DateFormat.yMMMMd().add_Hm().format(now);
+    // var now = DateTime.now();
+    // String dmCreationTime = DateFormat.yMMMMd().add_Hm().format(now);
     openData = await Hive.openBox(currentUser.userID);
     SocketConnection.instance.initializeSocket();
 
-    Project directMessage = Project(
-        projectID: 'DM',
-        projectName: 'Direct Messages',
-        projectCreatedOn: dmCreationTime,
-        projectRepoLink: '',
-        projectAdmin: currentUser.userID,
-        projectDescription: 'Direct messages with friends');
-    projectList.add(directMessage);
+    // Project directMessage = Project(
+    //     projectID: 'DM',
+    //     projectName: 'Direct Messages',
+    //     projectCreatedOn: dmCreationTime,
+    //     projectRepoLink: '',
+    //     projectAdmin: currentUser.userID,
+    //     projectDescription: 'Direct messages with friends');
+    // projectList.add(directMessage);
 
     final List<String> projectIDsFromDatabase = currentUser.projects.split(',');
-
+    projectList = [];
     for (var projectID in projectIDsFromDatabase) {
       if (projectID != '') {
         Project newProject = await retrieveProjectFromID(projectID);
@@ -68,12 +67,12 @@ class _HomeState extends State<Home> {
               return Scaffold(
                 appBar: AppBar(
                   elevation: 0,
-                  backgroundColor: Colors.white,
-                  foregroundColor: Colors.white,
+                  backgroundColor: currentTheme.secondaryColor,
+                  foregroundColor: currentTheme.secondaryColor,
                   actions: [
                     IconButton(
                       icon: Icon(Icons.settings_outlined,
-                          color: Colors.grey[900]),
+                          color: currentTheme.backgroundColor),
                       onPressed: () {
                         Navigator.pushNamed(context, SETTINGSDIR);
                       },
@@ -107,7 +106,7 @@ class _HomeState extends State<Home> {
                       width: MediaQuery.of(context).size.width,
                       height: 80,
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: currentTheme.secondaryColor,
                         borderRadius: BorderRadius.only(
                           bottomLeft: Radius.circular(30),
                           bottomRight: Radius.circular(30),
@@ -128,7 +127,7 @@ class _HomeState extends State<Home> {
                         children: [
                           Padding(
                             padding: EdgeInsets.only(left: 25, bottom: 7),
-                            child: Text('Projects', style: HomeUserStyle),
+                            child: Text('Projects', style: homeUserStyle),
                           ),
                         ],
                       ),
@@ -242,7 +241,7 @@ class _HomeState extends State<Home> {
                                         child: InkWell(
                                           child: Container(
                                             decoration: BoxDecoration(
-                                              color: Colors.red[400],
+                                              color: currentTheme.primaryColor,
                                               shape: BoxShape.circle,
                                               boxShadow: [
                                                 BoxShadow(
@@ -352,7 +351,7 @@ class _HomeState extends State<Home> {
       child: InkWell(
         child: Card(
           elevation: 12,
-          color: Colors.red[400],
+          color: currentTheme.primaryColor,
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(35))),
           child: Container(
@@ -367,7 +366,7 @@ class _HomeState extends State<Home> {
                     alignment: Alignment.centerLeft,
                     child: Icon(
                       Icons.drag_handle,
-                      color: Colors.red[200],
+                      color: currentTheme.lighterPrimaryColor,
                     ),
                   ),
                   Align(

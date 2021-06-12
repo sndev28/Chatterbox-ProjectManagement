@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'dart:io';
+
 import 'project.dart';
 import 'user.dart';
 import 'chat.dart';
@@ -21,6 +22,7 @@ List<User> currentProjectMembersList = [];
 Chat currentChat = Chat(chatID: '', chatName: '', members: '');
 
 List searchMatches = [];
+List<Chat> chatList = [];
 
 late Box openData;
 
@@ -96,3 +98,5 @@ String messageEncoder(chatID, userID, message) {
       '"$message"' +
       '}';
 }
+
+var currentTheme;

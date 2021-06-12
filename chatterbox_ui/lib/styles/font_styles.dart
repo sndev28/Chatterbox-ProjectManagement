@@ -1,70 +1,83 @@
+import 'package:chatterbox_ui/models/globals.dart';
 import 'package:flutter/material.dart';
-import 'colors.dart';
 
-const TextStyle loginAppTitleStyle = TextStyle(
+TextStyle loginAppTitleStyle = TextStyle(
   fontSize: 60,
   fontFamily: 'Pacifico',
-  color: greyFontColor,
+  color: currentTheme.textFontColor,
 );
 
-const TextStyle HomeUserStyle = TextStyle(
+TextStyle homeUserStyle = TextStyle(
   fontSize: 50,
-  color: greyFontColor,
+  color: currentTheme.textFontColor,
   fontFamily: 'Pacifico',
 );
 
-const TextStyle cardTitleTheme = TextStyle(
-    color: greyFontColor,
+TextStyle cardTitleTheme = TextStyle(
+    color: currentTheme.textFontColor,
     fontWeight: FontWeight.w500,
     fontSize: 30,
     fontStyle: FontStyle.italic,
     decoration: TextDecoration.none);
 
-const TextStyle cardSubTitleTheme = TextStyle(
-  color: greyFontColor,
+TextStyle cardSubTitleTheme = TextStyle(
+  color: currentTheme.textFontColor,
   fontWeight: FontWeight.w300,
   fontSize: 16.0,
   fontStyle: FontStyle.italic,
 );
 
-const TextStyle titleTheme =
+TextStyle titleTheme =
     TextStyle(color: Colors.white, fontWeight: FontWeight.w500);
 
-const TextStyle bodyTheme = TextStyle(
-  color: greyFontColor,
+TextStyle bodyTheme = TextStyle(
+  color: currentTheme.textFontColor,
   fontWeight: FontWeight.w500,
   fontSize: 16,
   fontStyle: FontStyle.italic,
 );
 
-const TextStyle subTitleTheme = TextStyle(
-    color: greyFontColor,
+TextStyle subTitleTheme = TextStyle(
+    color: currentTheme.textFontColor,
     fontWeight: FontWeight.w300,
     fontSize: 14.0,
     fontStyle: FontStyle.italic);
 
-const TextStyle createProjectDialogueHeadingTheme = TextStyle(
-  color: greyFontColor,
+TextStyle createProjectDialogueHeadingTheme = TextStyle(
+  color: currentTheme.textFontColor,
   fontWeight: FontWeight.w300,
   fontSize: 24.0,
   fontFamily: 'Pacifico',
 );
 
-const TextStyle chatCardSubTitleTheme = TextStyle(
-  color: greyFontColor,
+TextStyle chatCardSubTitleTheme = TextStyle(
+  color: currentTheme.textFontColor,
   fontWeight: FontWeight.w500,
   fontSize: 22.0,
   fontStyle: FontStyle.italic,
 );
 
-const TextStyle HomeChatStyle = TextStyle(
+TextStyle homeChatStyle = TextStyle(
   fontSize: 35,
   color: Colors.white,
   fontFamily: 'Pacifico',
 );
 
-const TextStyle dropDownTextStyle = TextStyle(
+TextStyle dropDownTextStyle = TextStyle(
   fontSize: 16,
-  color: greyFontColor,
+  color: currentTheme.textFontColor,
+  fontFamily: 'Pacifico',
+);
+
+TextStyle infoTitleTheme = TextStyle(
+  color: currentTheme.textFontColor,
+  fontWeight: FontWeight.w400,
+  fontSize: 15,
+);
+
+TextStyle infoSubTitleTheme = TextStyle(
+  color: currentTheme.textFontColor,
+  fontWeight: FontWeight.w500,
+  fontSize: 32.0,
   fontFamily: 'Pacifico',
 );

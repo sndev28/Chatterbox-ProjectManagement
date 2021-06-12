@@ -32,7 +32,7 @@ class _ProjectSettingsMembersPageState extends State<ProjectSettingsMembersPage>
   @override
   void initState() {
     super.initState();
-    memoizer = AsyncMemoizer();
+    // memoizer = AsyncMemoizer();
     _controller =
         AnimationController(vsync: this, duration: Duration(seconds: 1));
     _animation = Tween<double>(begin: 0, end: 250)
@@ -65,19 +65,11 @@ class _ProjectSettingsMembersPageState extends State<ProjectSettingsMembersPage>
               return Scaffold(
                 appBar: AppBar(
                   elevation: 0,
-                  backgroundColor: Colors.white,
-                  foregroundColor: Colors.white,
-                  // actions: [
-                  //   IconButton(
-                  //     icon: Icon(Icons.search_sharp),
-                  //     onPressed: () {
-                  //       print('To Be added');
-                  //     },
-                  //   )
-                  // ],
+                  backgroundColor: currentTheme.secondaryColor,
+                  foregroundColor: currentTheme.secondaryColor,
                   leading: IconButton(
-                    icon:
-                        Icon(Icons.arrow_back_ios_new, color: Colors.grey[900]),
+                    icon: Icon(Icons.arrow_back_ios_new,
+                        color: currentTheme.backgroundColor),
                     onPressed: () {
                       Navigator.pop(context);
                     },
@@ -120,12 +112,13 @@ class _ProjectSettingsMembersPageState extends State<ProjectSettingsMembersPage>
                                               ? memberSearch(
                                                   searchController.text)
                                               : _controller.forward();
+                                          searchOpened = !searchOpened;
                                         },
                                         child: Container(
                                           width: 40,
                                           height: 40,
                                           decoration: BoxDecoration(
-                                            color: Colors.red[400],
+                                            color: currentTheme.primaryColor,
                                             borderRadius: BorderRadius.only(
                                               topLeft: Radius.circular(80),
                                               bottomLeft: Radius.circular(80),
@@ -140,7 +133,7 @@ class _ProjectSettingsMembersPageState extends State<ProjectSettingsMembersPage>
                                           ),
                                           child: Icon(
                                             Icons.search_sharp,
-                                            color: Colors.grey[900],
+                                            color: currentTheme.backgroundColor,
                                           ),
                                         ),
                                       ),
@@ -157,31 +150,42 @@ class _ProjectSettingsMembersPageState extends State<ProjectSettingsMembersPage>
                                             )
                                           ],
                                         ),
-                                        child: Expanded(
-                                            child: TextField(
-                                          controller: searchController,
-                                          onChanged: (changedString) async {
-                                            if (changedString.isEmpty)
-                                              ifTextChanged = 0;
-                                            else {
-                                              ifTextChanged = heightOfDropdown;
-                                              await memberSearch(changedString);
-                                            }
-                                            setState(() {});
-                                          },
-                                        )),
+                                        child: Column(
+                                          children: [
+                                            Expanded(
+                                                child: Center(
+                                              child: TextField(
+                                                controller: searchController,
+                                                autofocus: true,
+                                                onChanged:
+                                                    (changedString) async {
+                                                  if (changedString.isEmpty)
+                                                    ifTextChanged = 0;
+                                                  else {
+                                                    ifTextChanged =
+                                                        heightOfDropdown;
+                                                    await memberSearch(
+                                                        changedString);
+                                                  }
+                                                  setState(() {});
+                                                },
+                                              ),
+                                            )),
+                                          ],
+                                        ),
                                       ),
                                       InkWell(
                                         onTap: () {
                                           searchOpened
                                               ? _controller.reverse()
                                               : _controller.forward();
+                                          searchOpened = !searchOpened;
                                         },
                                         child: Container(
                                           width: 40,
                                           height: 40,
                                           decoration: BoxDecoration(
-                                            color: Colors.red[400],
+                                            color: currentTheme.primaryColor,
                                             borderRadius: BorderRadius.only(
                                               topRight: Radius.circular(80),
                                               bottomRight: Radius.circular(80),
@@ -198,11 +202,13 @@ class _ProjectSettingsMembersPageState extends State<ProjectSettingsMembersPage>
                                               ? Icon(
                                                   Icons
                                                       .arrow_back_ios_new_sharp,
-                                                  color: Colors.grey[900],
+                                                  color: currentTheme
+                                                      .backgroundColor,
                                                 )
                                               : Icon(
                                                   Icons.group_add_outlined,
-                                                  color: Colors.grey[900],
+                                                  color: currentTheme
+                                                      .backgroundColor,
                                                 ),
                                         ),
                                       ),
@@ -252,7 +258,8 @@ class _ProjectSettingsMembersPageState extends State<ProjectSettingsMembersPage>
                                                   ? IconButton(
                                                       icon: Icon(
                                                         Icons.delete_outline,
-                                                        color: Colors.grey[900],
+                                                        color: currentTheme
+                                                            .backgroundColor,
                                                       ),
                                                       onPressed: () async {
                                                         ScaffoldMessenger.of(
@@ -274,7 +281,8 @@ class _ProjectSettingsMembersPageState extends State<ProjectSettingsMembersPage>
                                                   : IconButton(
                                                       icon: Icon(
                                                         Icons.add,
-                                                        color: Colors.grey[900],
+                                                        color: currentTheme
+                                                            .backgroundColor,
                                                       ),
                                                       onPressed: () async {
                                                         ScaffoldMessenger.of(
@@ -319,7 +327,7 @@ class _ProjectSettingsMembersPageState extends State<ProjectSettingsMembersPage>
                       width: MediaQuery.of(context).size.width,
                       height: 80,
                       decoration: BoxDecoration(
-                        color: Colors.white,
+                        color: currentTheme.secondaryColor,
                         borderRadius: BorderRadius.only(
                           bottomLeft: Radius.circular(30),
                           bottomRight: Radius.circular(30),
@@ -342,7 +350,7 @@ class _ProjectSettingsMembersPageState extends State<ProjectSettingsMembersPage>
                             padding: EdgeInsets.only(left: 25, bottom: 7),
                             child: Text(
                                 currentProject.projectName + ' : Members',
-                                style: HomeUserStyle),
+                                style: homeUserStyle),
                           ),
                         ],
                       ),
@@ -364,30 +372,30 @@ class _ProjectSettingsMembersPageState extends State<ProjectSettingsMembersPage>
         });
   }
 
-  memberInitializer() async => this.memoizer.runOnce(() async {
-        List currentProjectMembersIDsList =
-            currentProject.projectMembers.split(',');
-        currentProjectMembersList = [];
+  memberInitializer() async {
+    List currentProjectMembersIDsList =
+        currentProject.projectMembers.split(',');
+    currentProjectMembersList = [];
 
-        for (var memberID in currentProjectMembersIDsList) {
-          User tempUser = User();
-          if (memberID != '' && memberID != ' ') {
-            final response = await retrieveUserFromID(memberID);
-            if (int.parse(response[0]) == 200) {
-              tempUser.initializeFromJSON(response[1]);
-              currentProjectMembersList.add(tempUser);
-            }
-          }
+    for (var memberID in currentProjectMembersIDsList) {
+      User tempUser = User();
+      if (memberID != '' && memberID != ' ') {
+        final response = await retrieveUserFromID(memberID);
+        if (int.parse(response[0]) == 200) {
+          tempUser.initializeFromJSON(response[1]);
+          currentProjectMembersList.add(tempUser);
         }
-        membersRetrieved = true;
-      });
+      }
+    }
+    membersRetrieved = true;
+  }
 
   Widget _cardGenerator(User member) {
     return Padding(
         padding: EdgeInsets.fromLTRB(8, 4, 8, 8),
         child: Card(
           elevation: 12,
-          color: Colors.red[400],
+          color: currentTheme.primaryColor,
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(12))),
           child: ListTile(
@@ -397,7 +405,7 @@ class _ProjectSettingsMembersPageState extends State<ProjectSettingsMembersPage>
             ),
             trailing: Icon(
               Icons.delete_outlined,
-              color: Colors.grey[900],
+              color: currentTheme.backgroundColor,
             ),
             onTap: () async {
               ScaffoldMessenger.of(context).showSnackBar(SnackBar(

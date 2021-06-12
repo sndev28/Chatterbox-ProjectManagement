@@ -11,10 +11,11 @@ class ProjectSettingsPage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.white,
+        backgroundColor: currentTheme.secondaryColor,
+        foregroundColor: currentTheme.secondaryColor,
         leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new, color: Colors.grey[900]),
+          icon: Icon(Icons.arrow_back_ios_new,
+              color: currentTheme.backgroundColor),
           onPressed: () {
             Navigator.pop(context);
           },
@@ -45,7 +46,7 @@ class ProjectSettingsPage extends StatelessWidget {
             width: MediaQuery.of(context).size.width,
             height: 80,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: currentTheme.secondaryColor,
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(30),
                 bottomRight: Radius.circular(30),
@@ -66,7 +67,7 @@ class ProjectSettingsPage extends StatelessWidget {
                 Padding(
                   padding: EdgeInsets.only(left: 25, bottom: 7),
                   child: Text(currentProject.projectName + ' : Settings',
-                      style: HomeUserStyle),
+                      style: homeUserStyle),
                 ),
               ],
             ),
@@ -82,7 +83,7 @@ class ProjectSettingsPage extends StatelessWidget {
         padding: EdgeInsets.fromLTRB(8, 4, 8, 8),
         child: Card(
           elevation: 12,
-          color: Colors.red[400],
+          color: currentTheme.primaryColor,
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(12))),
           child: ListTile(
@@ -92,7 +93,7 @@ class ProjectSettingsPage extends StatelessWidget {
             ),
             trailing: Icon(
               Icons.arrow_forward_ios_outlined,
-              color: Colors.grey[900],
+              color: currentTheme.backgroundColor,
             ),
             onTap: () {
               Navigator.pushNamed(context, navigationDestination);

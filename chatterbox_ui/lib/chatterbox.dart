@@ -1,3 +1,4 @@
+import 'package:chatterbox_ui/models/globals.dart';
 import 'package:chatterbox_ui/screens/sub_project_pages/project_settings_page.dart';
 import 'package:chatterbox_ui/screens/sub_project_settings/chats_settings.dart';
 import 'package:chatterbox_ui/screens/sub_project_settings/member_settings.dart';
@@ -24,8 +25,8 @@ class _ChatterBoxState extends State<ChatterBox> {
   Widget build(BuildContext context) {
     return MaterialApp(
       theme: ThemeData(
-        primaryColor: Colors.red[400],
-        canvasColor: Colors.grey[900],
+        primaryColor: currentTheme.primaryColor,
+        canvasColor: currentTheme.backgroundColor,
       ),
       debugShowCheckedModeBanner: false,
       onGenerateRoute: _routes(),
@@ -34,7 +35,7 @@ class _ChatterBoxState extends State<ChatterBox> {
 
   RouteFactory _routes() {
     return (settings) {
-      // final arguments = settings.arguments;
+      final arguments = settings.arguments;
 
       Widget screen;
 

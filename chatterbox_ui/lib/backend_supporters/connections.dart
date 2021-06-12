@@ -5,7 +5,6 @@ import 'package:http/http.dart';
 import 'dart:convert';
 import '../models/chat.dart';
 
-// const BASE_URI = 'http://127.0.0.1:5000/user';
 const host = '192.168.1.36';
 
 final Uri userUri = Uri(scheme: 'http', host: host, path: '/user', port: 5000);
@@ -156,6 +155,7 @@ Future<List<String>> chatCreator({String chatName = ''}) async {
     body: jsonEncode(<String, String>{
       'projectID': currentProject.projectID,
       'projectChatList': chatID,
+      'updateCommand': 'chat',
     }),
   );
 
@@ -188,7 +188,7 @@ Future<void> memberDelete({String userID = '', String username = ''}) async {
         body: json.encode(<String, String>{
           'projectID': currentProject.projectID,
           'projectMembers': userID,
-          'updateCommand': 'userID',
+          'updateCommand': 'memberDelete_userID',
         }));
   else
     response = await delete(projectUri,
@@ -196,7 +196,7 @@ Future<void> memberDelete({String userID = '', String username = ''}) async {
         body: json.encode(<String, String>{
           'projectID': currentProject.projectID,
           'projectMembers': username,
-          'updateCommand': 'username',
+          'updateCommand': 'memberDelete_username',
         }));
 
   currentProject.initializeFromJSON(response.body);
@@ -263,5 +263,28 @@ memberSearch(String username) async {
   } else {
     searchMatches = json.decode(response.body)['matches'].split(',');
     searchMatches.removeWhere((element) => element == '');
+  }
+}
+
+Future<void> chatDelete({String chatID = ''}) async {
+  Response response = await delete(projectUri,
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode(<String, String>{
+        'projectID': currentProject.projectID,
+        'projectChatList': chatID,
+        'updateCommand': 'chatDelete',
+      }));
+  if (response.statusCode == 200) {
+    currentProject.initializeFromJSON(response.body);
+
+    final List<String> chatIDsFromDatabase =
+        currentProject.projectChatList.split(',');
+
+    for (var chatID in chatIDsFromDatabase) {
+      if (chatID != '') {
+        Chat newChat = await retrieveChatFromID(chatID);
+        chatList.add(newChat);
+      }
+    }
   }
 }

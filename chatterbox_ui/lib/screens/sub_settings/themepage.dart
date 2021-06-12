@@ -1,3 +1,4 @@
+import 'package:chatterbox_ui/models/globals.dart';
 import 'package:flutter/material.dart';
 import '../../styles/font_styles.dart';
 
@@ -7,14 +8,14 @@ class SettingsThemePage extends StatelessWidget {
     return Scaffold(
       appBar: AppBar(
         elevation: 0,
-        backgroundColor: Colors.white,
-        foregroundColor: Colors.white,
+        backgroundColor: currentTheme.secondaryColor,
+        foregroundColor: currentTheme.secondaryColor,
         leading: IconButton(
           onPressed: () {
             Navigator.pop(context);
           },
           icon: Icon(Icons.arrow_back_ios),
-          color: Colors.grey[900],
+          color: currentTheme.backgroundColor,
         ),
       ),
       body: Stack(
@@ -37,7 +38,7 @@ class SettingsThemePage extends StatelessWidget {
             width: MediaQuery.of(context).size.width,
             height: 80,
             decoration: BoxDecoration(
-              color: Colors.white,
+              color: currentTheme.secondaryColor,
               borderRadius: BorderRadius.only(
                 bottomLeft: Radius.circular(30),
                 bottomRight: Radius.circular(30),
@@ -57,7 +58,7 @@ class SettingsThemePage extends StatelessWidget {
               children: [
                 Padding(
                   padding: EdgeInsets.only(right: 40, bottom: 7),
-                  child: Text('Theme', style: HomeUserStyle),
+                  child: Text('Theme', style: homeUserStyle),
                 ),
               ],
             ),
@@ -75,7 +76,7 @@ class SettingsThemePage extends StatelessWidget {
       padding: EdgeInsets.fromLTRB(8, 4, 8, 8),
       child: Card(
           elevation: 12,
-          color: Colors.red[400],
+          color: currentTheme.primaryColor,
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(12))),
           child: ListTile(

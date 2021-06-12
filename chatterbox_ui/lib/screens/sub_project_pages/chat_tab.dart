@@ -1,3 +1,4 @@
+import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../../styles/font_styles.dart';
 import '../../models/globals.dart';
@@ -12,7 +13,9 @@ class ChatTab extends StatefulWidget {
 }
 
 class _ChatTabState extends State<ChatTab> {
-  List<Chat> chatList = [];
+  late ValueListenable<List> chatListValueListener =
+      ValueNotifier<List>(chatList);
+
   bool chatsRetrieved = false;
 
   @override
@@ -22,6 +25,7 @@ class _ChatTabState extends State<ChatTab> {
   }
 
   chatInitializer() async {
+    chatList = [];
     final List<String> chatIDsFromDatabase =
         currentProject.projectChatList.split(',');
 
@@ -44,12 +48,13 @@ class _ChatTabState extends State<ChatTab> {
               snapshot.connectionState == ConnectionState.done) {
             if (snapshot.hasError)
               return Text(snapshot.error.toString());
-            else
+            else {
+              chatsRetrieved = false;
               return Scaffold(
                 floatingActionButton: FloatingActionButton(
                   shape:
                       CircleBorder(side: BorderSide(color: Colors.transparent)),
-                  foregroundColor: Colors.white,
+                  foregroundColor: currentTheme.secondaryColor,
                   backgroundColor: Colors.black38,
                   elevation: 4,
                   child: Center(
@@ -110,7 +115,7 @@ class _ChatTabState extends State<ChatTab> {
                                         child: InkWell(
                                           child: Container(
                                             decoration: BoxDecoration(
-                                              color: Colors.red[400],
+                                              color: currentTheme.primaryColor,
                                               shape: BoxShape.circle,
                                               boxShadow: [
                                                 BoxShadow(
@@ -161,6 +166,7 @@ class _ChatTabState extends State<ChatTab> {
                                               Navigator.pop(context);
                                               chatNameController.text = '';
                                             }
+
                                             ScaffoldMessenger.of(context)
                                                 .showSnackBar(SnackBar(
                                               content: Text(resultText),
@@ -207,45 +213,16 @@ class _ChatTabState extends State<ChatTab> {
                           //       },
                           //       icon: Icon(
                           //         Icons.add,
-                          //         color: Colors.white,
+                          //         color: currentTheme.secondaryColor,
                           //       )),
                           // )
-                        ],
-                      ),
-                    ),
-                    Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: 80,
-                      decoration: BoxDecoration(
-                        color: Colors.white,
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(30),
-                          bottomRight: Radius.circular(30),
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black,
-                            blurRadius: 10.0,
-                            spreadRadius: 3.0,
-                            offset: Offset(
-                                2.0, 2.0), // shadow direction: bottom right
-                          )
-                        ],
-                      ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(left: 25, bottom: 7),
-                            child: Text('Projects', style: HomeUserStyle),
-                          ),
                         ],
                       ),
                     ),
                   ],
                 ),
               );
+            }
           } else {
             return Scaffold(
               body: Center(
@@ -270,7 +247,7 @@ class _ChatTabState extends State<ChatTab> {
       child: InkWell(
         child: Card(
           elevation: 12,
-          color: Colors.red[400],
+          color: currentTheme.primaryColor,
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(12))),
           child: ListTile(

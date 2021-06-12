@@ -66,7 +66,7 @@ class _ChatroomState extends State<Chatroom> {
                 ],
               ),
               child: Center(
-                  child: Text(currentChat.chatName, style: HomeChatStyle)),
+                  child: Text(currentChat.chatName, style: homeChatStyle)),
             ),
             Expanded(
               child: Container(
