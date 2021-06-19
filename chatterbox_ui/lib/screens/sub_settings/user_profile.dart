@@ -3,38 +3,34 @@ import 'package:chatterbox_ui/models/globals.dart';
 import 'package:chatterbox_ui/styles/font_styles.dart';
 import 'package:flutter/material.dart';
 
-class ProjectSettingsProjectPage extends StatefulWidget {
-  const ProjectSettingsProjectPage({Key? key}) : super(key: key);
+class UserProfile extends StatefulWidget {
+  const UserProfile({Key? key}) : super(key: key);
 
   @override
-  _ProjectSettingsProjectPageState createState() =>
-      _ProjectSettingsProjectPageState();
+  _UserProfileState createState() => _UserProfileState();
 }
 
-class _ProjectSettingsProjectPageState extends State<ProjectSettingsProjectPage>
+class _UserProfileState extends State<UserProfile>
     with TickerProviderStateMixin {
-  TextEditingController projectNameController = TextEditingController();
+  TextEditingController userNameController = TextEditingController();
   double _tickContainerNameWidth = 0;
   double _tickIconNameWidth = 0;
   late AnimationController _tickAnimationNameController;
   late Animation _tickAnimationName;
-  TextEditingController projectRepoLinkController = TextEditingController();
-  double _tickContainerRepoLinkWidth = 0;
-  double _tickIconRepoLinkWidth = 0;
-  late AnimationController _tickAnimationRepoLinkController;
-  late Animation _tickAnimationRepoLink;
-  TextEditingController projectDescriptionController = TextEditingController();
-  double _tickContainerDescriptionWidth = 0;
-  double _tickIconDescriptionWidth = 0;
-  late AnimationController _tickAnimationDescriptionController;
-  late Animation _tickAnimationDescription;
+
+  TextEditingController passwordController = TextEditingController();
+  double _tickContainerPasswordWidth = 0;
+  double _tickIconPasswordWidth = 0;
+  late AnimationController _tickAnimationPasswordController;
+  late Animation _tickAnimationPassword;
+
+  TextEditingController joinedOnController = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-    projectNameController.text = currentProject.projectName;
-    projectDescriptionController.text = currentProject.projectDescription;
-    projectRepoLinkController.text = currentProject.projectRepoLink;
+    userNameController.text = currentUser.username;
+    passwordController.text = '';
     _tickAnimationNameController =
         AnimationController(vsync: this, duration: Duration(seconds: 1));
     _tickAnimationName = Tween<double>(begin: 0, end: 45).animate(
@@ -47,47 +43,37 @@ class _ProjectSettingsProjectPageState extends State<ProjectSettingsProjectPage>
         });
       });
 
-    _tickAnimationRepoLinkController =
+    _tickAnimationPasswordController =
         AnimationController(vsync: this, duration: Duration(seconds: 1));
-    _tickAnimationRepoLink = Tween<double>(begin: 0, end: 45).animate(
+    _tickAnimationPassword = Tween<double>(begin: 0, end: 45).animate(
         CurvedAnimation(
-            parent: _tickAnimationRepoLinkController, curve: Curves.easeOut))
+            parent: _tickAnimationPasswordController, curve: Curves.easeOut))
       ..addListener(() {
         setState(() {
-          _tickContainerRepoLinkWidth = _tickAnimationRepoLink.value;
-          _tickIconRepoLinkWidth = (2 * _tickAnimationRepoLink.value) / 3;
+          _tickContainerPasswordWidth = _tickAnimationPassword.value;
+          _tickIconPasswordWidth = (2 * _tickAnimationPassword.value) / 3;
         });
       });
 
-    _tickAnimationDescriptionController =
-        AnimationController(vsync: this, duration: Duration(seconds: 1));
-    _tickAnimationDescription = Tween<double>(begin: 0, end: 45).animate(
-        CurvedAnimation(
-            parent: _tickAnimationDescriptionController, curve: Curves.easeOut))
-      ..addListener(() {
-        setState(() {
-          _tickContainerDescriptionWidth = _tickAnimationDescription.value;
-          _tickIconDescriptionWidth = (2 * _tickAnimationDescription.value) / 3;
-        });
-      });
+    joinedOnController.text = currentUser.joinedOn;
   }
 
   @override
   void dispose() {
     super.dispose();
-    projectNameController.dispose();
+    userNameController.dispose();
     _tickAnimationNameController.dispose();
-    _tickAnimationRepoLinkController.dispose();
-    _tickAnimationDescriptionController.dispose();
+    _tickAnimationPasswordController.dispose();
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-          image: DecorationImage(
-              image: AssetImage('assets/images/background5.jpg'),
-              fit: BoxFit.cover)),
+        image: DecorationImage(
+            image: AssetImage('assets/images/background11.jpg'),
+            fit: BoxFit.cover),
+      ),
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
@@ -111,9 +97,9 @@ class _ProjectSettingsProjectPageState extends State<ProjectSettingsProjectPage>
                   mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
-                    _projectName(),
-                    _projectRepoLink(),
-                    _projectDescription(),
+                    _userName(),
+                    _password(),
+                    _joinedOn(),
                   ],
                 ),
               ),
@@ -146,7 +132,7 @@ class _ProjectSettingsProjectPageState extends State<ProjectSettingsProjectPage>
                       alignment: Alignment.centerRight,
                       child: FittedBox(
                         fit: BoxFit.scaleDown,
-                        child: Text(currentProject.projectName + ' : Project',
+                        child: Text(currentUser.username + ' : User',
                             style: homeUserStyle),
                       ),
                     ),
@@ -160,7 +146,7 @@ class _ProjectSettingsProjectPageState extends State<ProjectSettingsProjectPage>
     );
   }
 
-  _projectName() {
+  _userName() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 50, 20, 0),
       child: Container(
@@ -188,7 +174,7 @@ class _ProjectSettingsProjectPageState extends State<ProjectSettingsProjectPage>
                         child: RotatedBox(
                             quarterTurns: 3,
                             child: Text(
-                              'Name',
+                              'Username',
                               style: infoTitleTheme,
                               maxLines: 1,
                             )))),
@@ -204,7 +190,7 @@ class _ProjectSettingsProjectPageState extends State<ProjectSettingsProjectPage>
                       padding: const EdgeInsets.all(8.0),
                       child: TextField(
                           maxLines: null,
-                          controller: projectNameController,
+                          controller: userNameController,
                           onChanged: (changedText) {
                             _tickAnimationNameController.forward();
                           },
@@ -231,20 +217,18 @@ class _ProjectSettingsProjectPageState extends State<ProjectSettingsProjectPage>
                   ),
                 ),
                 onTap: () async {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text('Updating in progress!'),
-                    duration: Duration(seconds: 2),
-                  ));
-                  await projectValueUpdater(
-                          updateDetail: 'projectName',
-                          updationValue: projectNameController.text)
-                      .then((value) {
-                    setState(() {});
-                  });
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text('Updation done!'),
-                    duration: Duration(seconds: 1),
-                  ));
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Updating credentials!')));
+                  bool changed = await usernameUpdate(
+                      newUsername: userNameController.text);
+                  if (changed == false) {
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                        content: Text(
+                            'Username exists. Please choose another username!')));
+                  } else
+                    ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+                      content: Text('Username updated!'),
+                    ));
                   _tickAnimationNameController.reverse();
                 },
               ),
@@ -253,7 +237,7 @@ class _ProjectSettingsProjectPageState extends State<ProjectSettingsProjectPage>
     );
   }
 
-  _projectRepoLink() {
+  _password() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 50, 20, 0),
       child: Container(
@@ -281,7 +265,7 @@ class _ProjectSettingsProjectPageState extends State<ProjectSettingsProjectPage>
                         child: RotatedBox(
                             quarterTurns: 3,
                             child: Text(
-                              'RepoLink',
+                              'Password',
                               style: infoTitleTheme,
                               maxLines: 1,
                             )))),
@@ -296,11 +280,11 @@ class _ProjectSettingsProjectPageState extends State<ProjectSettingsProjectPage>
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: TextField(
-                          maxLines: null,
-                          controller: projectRepoLinkController,
+                          controller: passwordController,
                           onChanged: (changedText) {
-                            _tickAnimationRepoLinkController.forward();
+                            _tickAnimationPasswordController.forward();
                           },
+                          obscureText: true,
                           style: TextStyle(
                             color: currentTheme.textFontColor,
                             fontWeight: FontWeight.w500,
@@ -313,32 +297,23 @@ class _ProjectSettingsProjectPageState extends State<ProjectSettingsProjectPage>
               ),
               InkWell(
                 child: Container(
-                  width: _tickContainerRepoLinkWidth,
+                  width: _tickContainerPasswordWidth,
                   decoration: BoxDecoration(
                       color: Colors.green,
                       borderRadius: BorderRadius.circular(10)),
                   child: Center(
                     child: Icon(Icons.check_circle,
                         color: currentTheme.backgroundColor,
-                        size: _tickIconRepoLinkWidth),
+                        size: _tickIconPasswordWidth),
                   ),
                 ),
                 onTap: () async {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text('Updating in progress!'),
-                    duration: Duration(seconds: 2),
-                  ));
-                  await projectValueUpdater(
-                          updateDetail: 'projectRepoLink',
-                          updationValue: projectRepoLinkController.text)
-                      .then((value) {
-                    setState(() {});
-                  });
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text('Updation done!'),
-                    duration: Duration(seconds: 1),
-                  ));
-                  _tickAnimationRepoLinkController.reverse();
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Updating credentials!')));
+                  await passwordUpdate(newPassword: passwordController.text);
+                  ScaffoldMessenger.of(context).showSnackBar(
+                      SnackBar(content: Text('Password changed!')));
+                  _tickAnimationPasswordController.reverse();
                 },
               ),
             ],
@@ -346,11 +321,11 @@ class _ProjectSettingsProjectPageState extends State<ProjectSettingsProjectPage>
     );
   }
 
-  _projectDescription() {
+  _joinedOn() {
     return Padding(
       padding: const EdgeInsets.fromLTRB(20, 50, 20, 0),
       child: Container(
-          height: 500,
+          height: 75,
           decoration: BoxDecoration(boxShadow: [
             BoxShadow(
                 color: Colors.black,
@@ -374,7 +349,7 @@ class _ProjectSettingsProjectPageState extends State<ProjectSettingsProjectPage>
                         child: RotatedBox(
                             quarterTurns: 3,
                             child: Text(
-                              'Description',
+                              'Joined On',
                               style: infoTitleTheme,
                               maxLines: 1,
                             )))),
@@ -389,11 +364,8 @@ class _ProjectSettingsProjectPageState extends State<ProjectSettingsProjectPage>
                     child: Padding(
                       padding: const EdgeInsets.all(8.0),
                       child: TextField(
-                          maxLines: null,
-                          controller: projectDescriptionController,
-                          onChanged: (changedText) {
-                            _tickAnimationDescriptionController.forward();
-                          },
+                          enabled: false,
+                          controller: joinedOnController,
                           style: TextStyle(
                             color: currentTheme.textFontColor,
                             fontWeight: FontWeight.w500,
@@ -403,36 +375,6 @@ class _ProjectSettingsProjectPageState extends State<ProjectSettingsProjectPage>
                     ),
                   ),
                 ),
-              ),
-              InkWell(
-                child: Container(
-                  width: _tickContainerDescriptionWidth,
-                  decoration: BoxDecoration(
-                      color: Colors.green,
-                      borderRadius: BorderRadius.circular(10)),
-                  child: Center(
-                    child: Icon(Icons.check_circle,
-                        color: currentTheme.backgroundColor,
-                        size: _tickIconDescriptionWidth),
-                  ),
-                ),
-                onTap: () async {
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text('Updating in progress!'),
-                    duration: Duration(seconds: 2),
-                  ));
-                  await projectValueUpdater(
-                          updateDetail: 'projectDescription',
-                          updationValue: projectDescriptionController.text)
-                      .then((value) {
-                    setState(() {});
-                  });
-                  ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-                    content: Text('Updation done!'),
-                    duration: Duration(seconds: 1),
-                  ));
-                  _tickAnimationDescriptionController.reverse();
-                },
               ),
             ],
           )),

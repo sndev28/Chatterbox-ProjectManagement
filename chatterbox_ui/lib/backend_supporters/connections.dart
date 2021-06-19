@@ -5,7 +5,7 @@ import 'package:http/http.dart';
 import 'dart:convert';
 import '../models/chat.dart';
 
-const host = '192.168.1.36';
+const host = ADDR;
 
 final Uri userUri = Uri(scheme: 'http', host: host, path: '/user', port: 5000);
 
@@ -279,7 +279,7 @@ Future<void> chatDelete({String chatID = ''}) async {
 
     final List<String> chatIDsFromDatabase =
         currentProject.projectChatList.split(',');
-
+    chatList = [];
     for (var chatID in chatIDsFromDatabase) {
       if (chatID != '') {
         Chat newChat = await retrieveChatFromID(chatID);
@@ -288,3 +288,104 @@ Future<void> chatDelete({String chatID = ''}) async {
     }
   }
 }
+
+Future<void> projectValueUpdater(
+    {String updateDetail = '', String updationValue = ''}) async {
+  Response response = await patch(projectUri,
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode(<String, String>{
+        'projectID': currentProject.projectID,
+        updateDetail: updationValue,
+        'updateCommand': updateDetail,
+      }));
+
+  if (response.statusCode == 200) {
+    currentProject.initializeFromJSON(response.body);
+  }
+}
+
+Future<bool> usernameUpdate({String newUsername = ''}) async {
+  Response response = await post(userUri,
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode(<String, String>{
+        'userID': currentUser.userID,
+        'username': newUsername,
+        'updateCommand': 'usernameUpdate',
+      }));
+
+  if (response.statusCode == 409) {
+    return false;
+  } else {
+    currentUser.initializeFromJSON(response.body);
+    return true;
+  }
+}
+
+Future<void> passwordUpdate({String newPassword = ''}) async {
+  Response response = await post(userUri,
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode(<String, String>{
+        'userID': currentUser.userID,
+        'password': newPassword,
+        'updateCommand': 'passwordUpdate',
+      }));
+
+  if (response.statusCode != 200) {
+    print(response.reasonPhrase);
+  }
+}
+
+Future<void> tasksAdd(String task) async {
+  Response response = await patch(
+    projectUri,
+    headers: {'Content-Type': 'application/json'},
+    body: json.encode(<String, String>{
+      'projectID': currentProject.projectID,
+      'updateCommand': 'tasks',
+      'projectTasks': task,
+    }),
+  );
+
+  if (response.statusCode == 200) {
+    currentProject.initializeFromJSON(response.body);
+    tasksList = currentProject.projectTasks.split(SEPERATOR);
+    tasksList.remove('');
+  }
+}
+
+Future<void> tasksDelete(String task) async {
+  Response response = await delete(
+    projectUri,
+    headers: {'Content-Type': 'application/json'},
+    body: json.encode(<String, String>{
+      'projectID': currentProject.projectID,
+      'updateCommand': 'tasksDelete',
+      'projectTasks': task,
+    }),
+  );
+  if (response.statusCode == 200) {
+    currentProject.initializeFromJSON(response.body);
+    tasksList = currentProject.projectTasks.split(SEPERATOR);
+    tasksList.remove('');
+  }
+}
+
+Future<void> deleteAllTasks() async {
+  Response response = await delete(projectUri,
+      headers: {'Content-Type': 'application/json'},
+      body: json.encode(<String, String>{
+        'projectID': currentProject.projectID,
+        'updateCommand': 'deleteAllTasks',
+      }));
+
+  if (response.statusCode == 200) {
+    currentProject.initializeFromJSON(response.body);
+    tasksList = currentProject.projectTasks.split(SEPERATOR);
+    tasksList = [];
+  }
+}
+
+Future<void> chatMemberAdd({String userID = '', String username = ''}) async {}
+
+Future<void> chatMemberDelete(
+    {String userID = '', String username = ''}) async {}

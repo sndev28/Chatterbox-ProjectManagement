@@ -21,11 +21,16 @@ BASE_URI = 'http://192.168.1.36:5000/'
 #     }
 
 data = {
-    'userID' : 'USER_ID_EBWCNPPVM00HSRR',
-    'username': '_System:retrieveFromID',
-    'password': 'dummy' 
+    'username': 'ha',
+    'updateCommand': 'checkLike'
 }
 
 response = requests.post(BASE_URI + 'user', data=data)
 
-print(response.text)
+# meh = response.text.split(',')
+# meh2 = [item + '}' for item in meh if item != '']
+
+# print(meh)
+
+
+print(json.loads(response.text)['matches'])

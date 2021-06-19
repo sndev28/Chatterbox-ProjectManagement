@@ -17,6 +17,7 @@ class _ProjectPageState extends State<ProjectPage> {
     return DefaultTabController(
       length: 3,
       child: Scaffold(
+          backgroundColor: Colors.transparent,
           appBar: AppBar(
             elevation: 0,
             backgroundColor: currentTheme.secondaryColor,
@@ -55,34 +56,41 @@ class _ProjectPageState extends State<ProjectPage> {
               TasksTab(),
               InfoTab(),
             ]),
-            Container(
-              width: MediaQuery.of(context).size.width,
-              height: 80,
-              decoration: BoxDecoration(
-                color: currentTheme.secondaryColor,
-                borderRadius: BorderRadius.only(
-                  bottomLeft: Radius.circular(30),
-                  bottomRight: Radius.circular(30),
-                ),
-                boxShadow: [
-                  BoxShadow(
-                    color: Colors.black,
-                    blurRadius: 10.0,
-                    spreadRadius: 3.0,
-                    offset: Offset(2.0, 2.0), // shadow direction: bottom right
-                  )
-                ],
-              ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.center,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(bottom: 7),
-                    child:
-                        Text(currentProject.projectName, style: homeUserStyle),
+            FittedBox(
+              fit: BoxFit.scaleDown,
+              child: Container(
+                padding: EdgeInsets.only(bottom: 7),
+                width: MediaQuery.of(context).size.width,
+                height: 80,
+                decoration: BoxDecoration(
+                  color: currentTheme.secondaryColor,
+                  borderRadius: BorderRadius.only(
+                    bottomLeft: Radius.circular(30),
+                    bottomRight: Radius.circular(30),
                   ),
-                ],
+                  boxShadow: [
+                    BoxShadow(
+                      color: Colors.black,
+                      blurRadius: 10.0,
+                      spreadRadius: 3.0,
+                      offset:
+                          Offset(2.0, 2.0), // shadow direction: bottom right
+                    )
+                  ],
+                ),
+                child: Column(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Align(
+                      alignment: Alignment.center,
+                      child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text(currentProject.projectName,
+                              style: homeUserStyle)),
+                    ),
+                  ],
+                ),
               ),
             ),
           ])),

@@ -16,19 +16,28 @@ class _InfoTabState extends State<InfoTab> {
   String admin = '';
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      body: SingleChildScrollView(
-        child: Padding(
-          padding: const EdgeInsets.only(top: 100),
-          child: Container(
-              child: Column(
-            children: [
-              _projectName(),
-              _projectDescription(),
-              _projectAdmin(),
-              _projectMembers()
-            ],
-          )),
+    return Container(
+      decoration: BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage('assets/images/background14.jpg'),
+              fit: BoxFit.cover)),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        body: SingleChildScrollView(
+          child: Padding(
+            padding: const EdgeInsets.only(top: 100),
+            child: Container(
+                child: Column(
+              children: [
+                _projectName(),
+                _projectCreatedOn(),
+                _projectDescription(),
+                _projectRepoLink(),
+                _projectAdmin(),
+                _projectMembers(),
+              ],
+            )),
+          ),
         ),
       ),
     );
@@ -60,7 +69,7 @@ class _InfoTabState extends State<InfoTab> {
       }
     }
 
-    setState(() {});
+    //setState(() {});
   }
 
   _projectName() {
@@ -104,6 +113,56 @@ class _InfoTabState extends State<InfoTab> {
                   ),
                   child: Center(
                     child: Text(currentProject.projectName,
+                        style: infoSubTitleTheme),
+                  ),
+                ),
+              )
+            ],
+          )),
+    );
+  }
+
+  _projectCreatedOn() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 50),
+      child: Container(
+          height: 75,
+          decoration: BoxDecoration(boxShadow: [
+            BoxShadow(
+                color: Colors.black,
+                spreadRadius: 5,
+                blurRadius: 10,
+                offset: Offset(0.0, 0.0))
+          ]),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(right: 1),
+                child: Container(
+                    width: 50,
+                    decoration: BoxDecoration(
+                      color: currentTheme.primaryColor,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Center(
+                        child: RotatedBox(
+                            quarterTurns: 3,
+                            child: Text(
+                              'Created On',
+                              style: infoTitleTheme,
+                              maxLines: 1,
+                            )))),
+              ),
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Center(
+                    child: Text(currentProject.projectCreatedOn,
                         style: infoSubTitleTheme),
                   ),
                 ),
@@ -163,6 +222,61 @@ class _InfoTabState extends State<InfoTab> {
                             fontSize: 20.0,
                             fontFamily: 'Pacifico',
                           )),
+                    ),
+                  ),
+                ),
+              )
+            ],
+          )),
+    );
+  }
+
+  _projectRepoLink() {
+    return Padding(
+      padding: const EdgeInsets.fromLTRB(20, 0, 20, 50),
+      child: Container(
+          height: 75,
+          decoration: BoxDecoration(boxShadow: [
+            BoxShadow(
+                color: Colors.black,
+                spreadRadius: 5,
+                blurRadius: 10,
+                offset: Offset(0.0, 0.0))
+          ]),
+          child: Row(
+            mainAxisAlignment: MainAxisAlignment.center,
+            crossAxisAlignment: CrossAxisAlignment.stretch,
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(right: 1),
+                child: Container(
+                    width: 50,
+                    decoration: BoxDecoration(
+                      color: currentTheme.primaryColor,
+                      borderRadius: BorderRadius.circular(12),
+                    ),
+                    child: Center(
+                        child: RotatedBox(
+                            quarterTurns: 3,
+                            child: Text(
+                              'RepoLink',
+                              style: infoTitleTheme,
+                            )))),
+              ),
+              Expanded(
+                child: Container(
+                  decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(12),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Center(
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(currentProject.projectRepoLink,
+                            style: infoSubTitleTheme),
+                      ),
                     ),
                   ),
                 ),

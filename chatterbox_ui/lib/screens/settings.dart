@@ -9,67 +9,79 @@ import '../navigations.dart';
 class Settings extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: currentTheme.secondaryColor,
-        foregroundColor: currentTheme.secondaryColor,
-        leading: IconButton(
-          onPressed: () {
-            Navigator.pop(context);
-          },
-          icon: Icon(Icons.arrow_back_ios),
-          color: currentTheme.backgroundColor,
+    return Container(
+      decoration: BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage('assets/images/background6.jpg'),
+              fit: BoxFit.cover)),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: currentTheme.secondaryColor,
+          foregroundColor: currentTheme.secondaryColor,
+          leading: IconButton(
+            onPressed: () {
+              Navigator.pop(context);
+            },
+            icon: Icon(Icons.arrow_back_ios),
+            color: currentTheme.backgroundColor,
+          ),
         ),
-      ),
-      body: Stack(
-        children: [
-          SingleChildScrollView(
-            child: Padding(
-              padding: const EdgeInsets.only(top: 80),
-              child: ListView(
-                primary: false,
-                shrinkWrap: true,
-                padding: EdgeInsets.fromLTRB(12, 80, 12, 12),
+        body: Stack(
+          children: [
+            SingleChildScrollView(
+              child: Padding(
+                padding: const EdgeInsets.only(top: 80),
+                child: ListView(
+                  primary: false,
+                  shrinkWrap: true,
+                  padding: EdgeInsets.fromLTRB(12, 80, 12, 12),
+                  children: [
+                    _navigationManager('Profile', context, settingsProfileDir),
+                    _navigationManager('Themes', context, settingsThemesDir),
+                    _navigationManager('Info', context, settingsInfoDir),
+                    _logout(context),
+                  ],
+                ),
+              ),
+            ),
+            Container(
+              width: MediaQuery.of(context).size.width,
+              height: 80,
+              decoration: BoxDecoration(
+                color: currentTheme.secondaryColor,
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(30),
+                  bottomRight: Radius.circular(30),
+                ),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black,
+                    blurRadius: 10.0,
+                    spreadRadius: 3.0,
+                    offset: Offset(2.0, 2.0), // shadow direction: bottom right
+                  )
+                ],
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
                 children: [
-                  _navigationManager('Profile', context, settingsProfileDir),
-                  _navigationManager('Themes', context, settingsThemesDir),
-                  _navigationManager('Info', context, settingsInfoDir),
-                  _logout(context),
+                  Padding(
+                    padding: EdgeInsets.only(right: 40, bottom: 7, left: 40),
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text('Settings', style: homeUserStyle)),
+                    ),
+                  ),
                 ],
               ),
             ),
-          ),
-          Container(
-            width: MediaQuery.of(context).size.width,
-            height: 80,
-            decoration: BoxDecoration(
-              color: currentTheme.secondaryColor,
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(30),
-                bottomRight: Radius.circular(30),
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black,
-                  blurRadius: 10.0,
-                  spreadRadius: 3.0,
-                  offset: Offset(2.0, 2.0), // shadow direction: bottom right
-                )
-              ],
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(right: 40, bottom: 7),
-                  child: Text('Settings', style: homeUserStyle),
-                ),
-              ],
-            ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

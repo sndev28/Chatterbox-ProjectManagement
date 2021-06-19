@@ -9,7 +9,10 @@ import string
 from requests import NullHandler
 import time
 from sqlalchemy.sql.elements import Null
+import json
 
+
+SEPERATOR = '<sep>'
 
 app = Flask(__name__)
 CORS(app)
@@ -119,6 +122,8 @@ class ProjectDetails(db.Model):
     projectMembers = db.Column(db.String)
     projectDescription = db.Column(db.String)
     projectChatList = db.Column(db.String)
+    projectTasks = db.Column(db.String)
+
 
     def toJSON(self):
         return {
@@ -129,7 +134,8 @@ class ProjectDetails(db.Model):
             'projectAdmin': self.projectAdmin,
             'projectMembers': self.projectMembers,
             'projectDescription': self.projectDescription,
-            'projectChatList': self.projectChatList
+            'projectChatList': self.projectChatList,
+            'projectTasks': self.projectTasks
         }
 
 
@@ -144,6 +150,9 @@ projectDetailsArgs.add_argument('projectAdmin', type = str, help = 'projectAdmin
 projectDetailsArgs.add_argument('projectMembers', type = str, help = 'projectMembers not sent!')
 projectDetailsArgs.add_argument('projectDescription', type = str, help = 'projectDescription not sent!')
 projectDetailsArgs.add_argument('projectChatList', type = str, help = 'projectChatList not sent!')
+projectDetailsArgs.add_argument('projectTasks', type = str, help = 'projectTasks not sent!')
+projectDetailsArgs.add_argument('updateCommand', type = str, help = 'No update command sent')
+
 
 
 
@@ -178,8 +187,7 @@ class Projects(Resource):
         print(retrieved_project.toJSON())
         return retrieved_project.toJSON()
 
-    def patch(self): #update chatlist
-        print(projectDetailsArgs.parse_args())
+    def patch(self): #update project
         args = projectDetailsArgs.parse_args()
         if not ProjectDetails.query.filter_by(projectID = args['projectID']).first(): #project doesnt exist
             print('Project doesnt exist!')
@@ -190,13 +198,125 @@ class Projects(Resource):
         project = ProjectDetails.query.filter_by(projectID = args['projectID']).first()
 
         print('Project retrieved!')
+
+        if args['updateCommand'] == 'chat':        
+            if  project.projectChatList == None:
+                project.projectChatList = args['projectChatList'] + ','
+            else: project.projectChatList += args['projectChatList'] + ','
+            db.session.commit()
+
+        elif args['updateCommand'] == 'members_userID':
+            if  project.projectMembers == None:
+                project.projectMembers = args['projectMembers'] + ','
+            else: project.projectMembers += args['projectMembers'] + ','
+            db.session.commit()
+
+        elif args['updateCommand'] == 'members_username':
+            user = UserDetails.query.filter_by(username = args['projectMembers']).first()
+            if user == None:
+                return 'No user found!', 404 
+            if  project.projectMembers == None:
+                project.projectMembers = user.userID + ','
+            else: project.projectMembers += user.userID + ','
+            db.session.commit()
+
+        elif args['updateCommand'] == 'projectRepoLink':
+            project.projectRepoLink = args['projectRepoLink']
+            db.session.commit()
+
+        elif args['updateCommand'] == 'projectName':
+            project.projectName = args['projectName']
+            db.session.commit()
+
+        elif args['updateCommand'] == 'projectDescription':
+            project.projectDescription = args['projectDescription']
+            db.session.commit()
+
+        elif args['updateCommand'] == 'tasks':        
+            if  project.projectTasks == None:
+                project.projectTasks = args['projectTasks'] + SEPERATOR
+            else: project.projectTasks += args['projectTasks'] + SEPERATOR
+            db.session.commit()
         
-        if  project.projectChatList == None:
-            project.projectChatList = args['projectChatList'] + ','
-        else: project.projectChatList += args['projectChatList'] + ','
-        db.session.commit()
 
         return project.toJSON()
+
+
+    def delete(self):
+        args = projectDetailsArgs.parse_args()
+
+        currentProject = ProjectDetails.query.filter_by(projectID = args['projectID']).first()
+
+        if 'memberDelete' in args['updateCommand']:
+            listOfMembers = currentProject.projectMembers.split(',')
+
+            if args['updateCommand'] == 'memberDelete_userID':
+                if args['projectMembers'] in listOfMembers:
+                    listOfMembers.remove(args['projectMembers'])
+            elif args['updateCommand'] == 'memberDelete_username':
+                try:
+                    user = UserDetails.query.filter_by(username = args['projectMembers']).first()
+                    if user.userID in listOfMembers:
+                        listOfMembers.remove(user.userID)
+
+                except:
+                    return 'User not found', 404
+
+
+
+            stringOfMembers = ''
+            
+            for member in listOfMembers:
+                if member != '':
+                    stringOfMembers += member + ','
+            
+            currentProject.projectMembers = stringOfMembers
+
+            db.session.commit()
+
+        elif args['updateCommand'] == 'chatDelete':
+            listOfChats = currentProject.projectChatList.split(',')
+            if args['projectChatList'] in listOfChats:
+                listOfChats.remove(args['projectChatList'])
+            else:
+                return 'Chat not found', 404
+            
+            stringOfChats = ''
+
+            for chat in listOfChats:
+                if chat != '':
+                    stringOfChats += chat + ','
+
+            currentProject.projectChatList = stringOfChats
+
+            db.session.commit()
+
+        elif args['updateCommand'] == 'tasksDelete':
+            listOfTasks = currentProject.projectTasks.split(SEPERATOR)
+            print(listOfTasks)
+            if args['projectTasks'] in listOfTasks:
+                listOfTasks.remove(args['projectTasks'])
+            else:
+                return 'Task not found', 404
+            
+            stringOfTasks = ''
+
+            for task in listOfTasks:
+                if task != '':
+                    stringOfTasks += task + SEPERATOR
+
+            currentProject.projectTasks = stringOfTasks
+
+            db.session.commit()
+
+        elif args['updateCommand'] == 'deleteAllTasks':
+            
+            currentProject.projectTasks = ''
+
+            db.session.commit()
+
+        return currentProject.toJSON()       
+
 
 
 
@@ -256,10 +376,11 @@ class UserDetails(db.Model):
 
 
 user_args = reqparse.RequestParser()
-user_args.add_argument('username', type = str, help = 'No username was sent!', required = True)
-user_args.add_argument('password', type = str, help = 'Password empty!', required = True)
-user_args.add_argument('projects', type = str, help = 'Project empty!', required = False)
-user_args.add_argument('userID', type = str, help = 'userID empty!', required = False)
+user_args.add_argument('username', type = str, help = 'No username was sent!')
+user_args.add_argument('password', type = str, help = 'Password empty!')
+user_args.add_argument('projects', type = str, help = 'Project empty!')
+user_args.add_argument('userID', type = str, help = 'userID empty!')
+user_args.add_argument('updateCommand', type = str, help = 'Update command not sent')
 
 
 
@@ -278,28 +399,69 @@ class User(Resource):
         
     def post(self): #register/updater
         args = user_args.parse_args()
+        print(args)
 
-        if args['username'] == '_System:retrieveFromID':
+        if args['updateCommand'] == 'newUserRegister':
+            joinedOn = datetime.now().strftime('%B %d, %Y %H:%M')
+            userID = 'USER_ID_' + ''.join(random.choices(string.ascii_uppercase + string.digits, k = 15))
+            
+            new_user = UserDetails(username = args['username'], password = args['password'], joinedOn = joinedOn, userID = userID, projects = '')
+
+            db.session.add(new_user)
+            db.session.commit()
+
+            return 'User created!', 200
+
+        elif args['updateCommand'] == 'retrieveUserFromID':
             try:
                 user = UserDetails.query.filter_by(userID = args['userID']).first()
                 return user.toJSON()
             except:
-                pass
+                return 'User not found', 404
 
-        user = UserDetails.query.filter_by(username = args['username']).first()
+        elif args['updateCommand'] == 'retrieveUserFromUsername':
+            try:
+                user = UserDetails.query.filter_by(username = args['username']).first()
+                return user.toJSON()
+            except:
+                return 'User not found', 404
 
-        if user: #username already taken
+        elif args['updateCommand'] == 'checkLike':
+            users = UserDetails.query.filter(UserDetails.username.ilike(f"%{args['username']}%")).all()
+            stringListofUsers = ''
+
+            for user in users:
+                stringListofUsers += user.username + ','
+            
+            if stringListofUsers == '' :
+                return 'No matches', 404
+            else:
+                return {'matches' : stringListofUsers},  200
+
+        elif args['updateCommand'] == 'usernameUpdate':
+            checkUser = UserDetails.query.filter_by(username = args['username']).first()
+
+            if checkUser:
+                return 'Username taken', 409
+            else:
+                user = UserDetails.query.filter_by(userID = args['userID']).first()
+                user.username = args['username']
+
+                db.session.commit()
+
             return user.toJSON()
 
-        joinedOn = datetime.now().strftime('%B %d, %Y %H:%M')
-        userID = 'USER_ID_' + ''.join(random.choices(string.ascii_uppercase + string.digits, k = 15))
-        
-        new_user = UserDetails(username = args['username'], password = args['password'], joinedOn = joinedOn, userID = userID, projects = '')
+        elif args['updateCommand'] == 'passwordUpdate':
+            user = UserDetails.query.filter_by(userID = args['userID']).first()
+            user.password = args['password']
 
-        db.session.add(new_user)
-        db.session.commit()
+            db.session.commit()
 
-        return 'User created!', 200
+
+            
+
+
+
 
     def options(self):
         print('Options handled!')

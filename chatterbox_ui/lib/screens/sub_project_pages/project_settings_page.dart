@@ -8,71 +8,86 @@ class ProjectSettingsPage extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 0,
-        backgroundColor: currentTheme.secondaryColor,
-        foregroundColor: currentTheme.secondaryColor,
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back_ios_new,
-              color: currentTheme.backgroundColor),
-          onPressed: () {
-            Navigator.pop(context);
-          },
+    return Container(
+      decoration: BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage('assets/images/background1.jpg'),
+              fit: BoxFit.cover)),
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
+        appBar: AppBar(
+          elevation: 0,
+          backgroundColor: currentTheme.secondaryColor,
+          foregroundColor: currentTheme.secondaryColor,
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back_ios_new,
+                color: currentTheme.backgroundColor),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          ),
         ),
-      ),
-      body: Stack(
-        children: [
-          Padding(
-            padding: const EdgeInsets.only(top: 60),
-            child: SingleChildScrollView(
-              child: Padding(
-                padding: const EdgeInsets.only(top: 80),
-                child: ListView(
-                  shrinkWrap: true,
-                  children: [
-                    _navigationManager(
-                        'Project', context, projectSettingsProject),
-                    _navigationManager(
-                        'Members', context, projectSettingsMembers),
-                    _navigationManager('Tasks', context, projectSettingsTasks),
-                    _navigationManager('Chats', context, projectSettingsChats),
-                  ],
+        body: Stack(
+          children: [
+            Padding(
+              padding: const EdgeInsets.only(top: 60),
+              child: SingleChildScrollView(
+                child: Padding(
+                  padding: const EdgeInsets.only(top: 80),
+                  child: ListView(
+                    shrinkWrap: true,
+                    children: [
+                      _navigationManager(
+                          'Project', context, projectSettingsProject),
+                      _navigationManager(
+                          'Members', context, projectSettingsMembers),
+                      _navigationManager(
+                          'Tasks', context, projectSettingsTasks),
+                      _navigationManager(
+                          'Chats', context, projectSettingsChats),
+                    ],
+                  ),
                 ),
               ),
             ),
-          ),
-          Container(
-            width: MediaQuery.of(context).size.width,
-            height: 80,
-            decoration: BoxDecoration(
-              color: currentTheme.secondaryColor,
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(30),
-                bottomRight: Radius.circular(30),
-              ),
-              boxShadow: [
-                BoxShadow(
-                  color: Colors.black,
-                  blurRadius: 10.0,
-                  spreadRadius: 3.0,
-                  offset: Offset(2.0, 2.0), // shadow direction: bottom right
-                )
-              ],
-            ),
-            child: Column(
-              mainAxisAlignment: MainAxisAlignment.end,
-              crossAxisAlignment: CrossAxisAlignment.stretch,
-              children: [
-                Padding(
-                  padding: EdgeInsets.only(left: 25, bottom: 7),
-                  child: Text(currentProject.projectName + ' : Settings',
-                      style: homeUserStyle),
+            Container(
+              width: MediaQuery.of(context).size.width,
+              height: 80,
+              decoration: BoxDecoration(
+                color: currentTheme.secondaryColor,
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(30),
+                  bottomRight: Radius.circular(30),
                 ),
-              ],
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black,
+                    blurRadius: 10.0,
+                    spreadRadius: 3.0,
+                    offset: Offset(2.0, 2.0), // shadow direction: bottom right
+                  )
+                ],
+              ),
+              child: Column(
+                mainAxisAlignment: MainAxisAlignment.end,
+                crossAxisAlignment: CrossAxisAlignment.stretch,
+                children: [
+                  Padding(
+                    padding: EdgeInsets.only(left: 25, bottom: 7, right: 25),
+                    child: Align(
+                      alignment: Alignment.centerRight,
+                      child: FittedBox(
+                        fit: BoxFit.scaleDown,
+                        child: Text(currentProject.projectName + ' : Settings',
+                            style: homeUserStyle),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

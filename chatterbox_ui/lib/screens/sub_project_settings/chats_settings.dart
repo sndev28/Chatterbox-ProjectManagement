@@ -18,87 +18,145 @@ class _ProjectSettingsChatsPageState extends State<ProjectSettingsChatsPage> {
   @override
   Widget build(BuildContext context) {
     chatList = [];
-    return FutureBuilder(
-        future: chatInitializer(),
-        builder: (context, snapshot) {
-          if (chatsRetrieved == true &&
-              snapshot.connectionState == ConnectionState.done) {
-            if (snapshot.hasError)
-              return Text(snapshot.error.toString());
-            else {
-              chatsRetrieved = false;
-              return Scaffold(
-                appBar: AppBar(
-                  elevation: 0,
-                  backgroundColor: currentTheme.secondaryColor,
-                  foregroundColor: currentTheme.secondaryColor,
-                  leading: IconButton(
-                    icon: Icon(Icons.arrow_back_ios_new,
-                        color: currentTheme.backgroundColor),
-                    onPressed: () {
-                      Navigator.pop(context);
-                    },
+    return Container(
+      decoration: BoxDecoration(
+          image: DecorationImage(
+              image: AssetImage('assets/images/background12.jpg'),
+              fit: BoxFit.cover)),
+      child: FutureBuilder(
+          future: chatInitializer(),
+          builder: (context, snapshot) {
+            if (chatsRetrieved == true &&
+                snapshot.connectionState == ConnectionState.done) {
+              if (snapshot.hasError)
+                return Text(snapshot.error.toString());
+              else {
+                chatsRetrieved = false;
+                return Scaffold(
+                  backgroundColor: Colors.transparent,
+                  appBar: AppBar(
+                    elevation: 0,
+                    backgroundColor: currentTheme.secondaryColor,
+                    foregroundColor: currentTheme.secondaryColor,
+                    leading: IconButton(
+                      icon: Icon(Icons.arrow_back_ios_new,
+                          color: currentTheme.backgroundColor),
+                      onPressed: () {
+                        Navigator.pop(context);
+                      },
+                    ),
                   ),
-                ),
-                body: Stack(
-                  children: [
-                    SingleChildScrollView(
-                      child: Padding(
-                          padding: const EdgeInsets.only(top: 100),
-                          child: ListView.builder(
-                              itemCount: chatList.length,
-                              primary: false,
-                              shrinkWrap: true,
-                              itemBuilder: (context, index) =>
-                                  _cardGenerator(chatList[index]))),
-                    ),
-                    Container(
-                      width: MediaQuery.of(context).size.width,
-                      height: 80,
-                      decoration: BoxDecoration(
-                        color: currentTheme.secondaryColor,
-                        borderRadius: BorderRadius.only(
-                          bottomLeft: Radius.circular(30),
-                          bottomRight: Radius.circular(30),
-                        ),
-                        boxShadow: [
-                          BoxShadow(
-                            color: Colors.black,
-                            blurRadius: 10.0,
-                            spreadRadius: 3.0,
-                            offset: Offset(
-                                2.0, 2.0), // shadow direction: bottom right
-                          )
-                        ],
+                  body: Stack(
+                    children: [
+                      SingleChildScrollView(
+                        child: Padding(
+                            padding: const EdgeInsets.only(top: 100),
+                            child: Column(
+                              mainAxisAlignment: MainAxisAlignment.start,
+                              crossAxisAlignment: CrossAxisAlignment.center,
+                              children: [
+                                Padding(
+                                    padding: EdgeInsets.symmetric(
+                                        horizontal: 64, vertical: 20),
+                                    child: Card(
+                                      elevation: 12,
+                                      color: currentTheme.primaryColor,
+                                      shape: RoundedRectangleBorder(
+                                          borderRadius: BorderRadius.all(
+                                              Radius.circular(12))),
+                                      child: ListTile(
+                                        title: Text(
+                                          'Delete all chats!',
+                                          style: bodyTheme,
+                                        ),
+                                        trailing: Icon(
+                                          Icons.delete_outlined,
+                                          color: currentTheme.backgroundColor,
+                                        ),
+                                        onTap: () async {
+                                          ScaffoldMessenger.of(context)
+                                              .showSnackBar(SnackBar(
+                                            content: Text(
+                                                'Deletion under progress!'),
+                                            duration: Duration(seconds: 4),
+                                          ));
+                                          List copyChatList = []
+                                            ..addAll(chatList);
+                                          for (var chat in copyChatList) {
+                                            await chatDelete(
+                                                chatID: chat.chatID);
+                                          }
+                                          chatList = [];
+
+                                          setState(() {});
+                                        },
+                                      ),
+                                    )),
+                                ListView.builder(
+                                    itemCount: chatList.length,
+                                    primary: false,
+                                    shrinkWrap: true,
+                                    itemBuilder: (context, index) =>
+                                        _cardGenerator(chatList[index])),
+                              ],
+                            )),
                       ),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        crossAxisAlignment: CrossAxisAlignment.stretch,
-                        children: [
-                          Padding(
-                            padding: EdgeInsets.only(left: 25, bottom: 7),
-                            child: Text(currentProject.projectName + ' : Chats',
-                                style: homeUserStyle),
+                      Container(
+                        width: MediaQuery.of(context).size.width,
+                        height: 80,
+                        decoration: BoxDecoration(
+                          color: currentTheme.secondaryColor,
+                          borderRadius: BorderRadius.only(
+                            bottomLeft: Radius.circular(30),
+                            bottomRight: Radius.circular(30),
                           ),
-                        ],
+                          boxShadow: [
+                            BoxShadow(
+                              color: Colors.black,
+                              blurRadius: 10.0,
+                              spreadRadius: 3.0,
+                              offset: Offset(
+                                  2.0, 2.0), // shadow direction: bottom right
+                            )
+                          ],
+                        ),
+                        child: Column(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          crossAxisAlignment: CrossAxisAlignment.stretch,
+                          children: [
+                            Padding(
+                              padding: EdgeInsets.only(
+                                  left: 25, bottom: 7, right: 25),
+                              child: Align(
+                                alignment: Alignment.centerRight,
+                                child: FittedBox(
+                                  fit: BoxFit.scaleDown,
+                                  child: Text(
+                                      currentProject.projectName + ' : Chats',
+                                      style: homeUserStyle),
+                                ),
+                              ),
+                            ),
+                          ],
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
+                );
+              }
+            } else {
+              return Scaffold(
+                body: Center(
+                  child: Container(
+                      width: MediaQuery.of(context).size.width / 2,
+                      child: Image.asset(
+                        'assets/images/meow.gif',
+                      )),
                 ),
               );
             }
-          } else {
-            return Scaffold(
-              body: Center(
-                child: Container(
-                    width: MediaQuery.of(context).size.width / 2,
-                    child: Image.asset(
-                      'assets/images/meow.gif',
-                    )),
-              ),
-            );
-          }
-        });
+          }),
+    );
   }
 
   chatInitializer() async {

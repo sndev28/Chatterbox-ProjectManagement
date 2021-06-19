@@ -4,6 +4,7 @@ import 'package:chatterbox_ui/screens/sub_project_settings/chats_settings.dart';
 import 'package:chatterbox_ui/screens/sub_project_settings/member_settings.dart';
 import 'package:chatterbox_ui/screens/sub_project_settings/project_settings.dart';
 import 'package:chatterbox_ui/screens/sub_project_settings/tasks_settings.dart';
+import 'package:chatterbox_ui/screens/sub_settings/user_profile.dart';
 import 'package:flutter/material.dart';
 import 'screens/home.dart';
 import 'navigations.dart';
@@ -58,6 +59,10 @@ class _ChatterBoxState extends State<ChatterBox> {
 
         case settingsThemesDir:
           screen = SettingsThemePage();
+          break;
+
+        case settingsProfileDir:
+          screen = UserProfile();
           break;
 
         case settingsInfoDir:

@@ -8,6 +8,10 @@ import 'package:hive/hive.dart';
 // ignore: unused_import
 import 'package:hive_flutter/hive_flutter.dart';
 
+const ADDR = '192.168.1.34';
+
+const String SEPERATOR = '<sep>';
+
 User currentUser = User();
 Project currentProject = Project(
     projectID: '',
@@ -18,16 +22,18 @@ Project currentProject = Project(
     projectDescription: '');
 
 List<User> currentProjectMembersList = [];
+List<User> currentChatMembersList = [];
 
 Chat currentChat = Chat(chatID: '', chatName: '', members: '');
 
 List searchMatches = [];
 List<Chat> chatList = [];
+List<String> tasksList = [];
 
 late Box openData;
 
 class SocketConnection {
-  static const IPADDR = '192.168.1.36';
+  static const IPADDR = ADDR;
   static const PORT = 5050;
   SocketConnection._privateConstructor();
   static late Socket socket;
