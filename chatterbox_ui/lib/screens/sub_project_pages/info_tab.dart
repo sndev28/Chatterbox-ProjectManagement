@@ -50,10 +50,13 @@ class _InfoTabState extends State<InfoTab> {
   }
 
   _initalizeDetails() async {
-    List response = await retrieveUserFromID(currentProject.projectAdmin);
-    User user = User();
-    user.initializeFromJSON(response[1]);
-    admin = user.username;
+    await retrieveUserFromID(currentProject.projectAdmin).then((value) {
+      User user = User();
+      user.initializeFromJSON(value[1]);
+      admin = user.username;
+      setState(() {});
+    });
+
     List currentProjectMembersIDsList =
         currentProject.projectMembers.split(',');
     currentProjectMembersList = [];
@@ -61,15 +64,15 @@ class _InfoTabState extends State<InfoTab> {
     for (var memberID in currentProjectMembersIDsList) {
       User tempUser = User();
       if (memberID != '' && memberID != ' ') {
-        final response = await retrieveUserFromID(memberID);
-        if (int.parse(response[0]) == 200) {
-          tempUser.initializeFromJSON(response[1]);
-          currentProjectMembersList.add(tempUser);
-        }
+        await retrieveUserFromID(memberID).then((value) {
+          if (int.parse(value[0]) == 200) {
+            tempUser.initializeFromJSON(value[1]);
+            currentProjectMembersList.add(tempUser);
+            setState(() {});
+          }
+        });
       }
     }
-
-    //setState(() {});
   }
 
   _projectName() {

@@ -1,6 +1,8 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:chatterbox_ui/backend_supporters/connections.dart';
+
 import 'project.dart';
 import 'user.dart';
 import 'chat.dart';
@@ -8,7 +10,7 @@ import 'package:hive/hive.dart';
 // ignore: unused_import
 import 'package:hive_flutter/hive_flutter.dart';
 
-const ADDR = '192.168.1.34';
+const ADDR = '192.168.1.37';
 
 const String SEPERATOR = '<sep>';
 
@@ -23,6 +25,7 @@ Project currentProject = Project(
 
 List<User> currentProjectMembersList = [];
 List<User> currentChatMembersList = [];
+Map<String, User> chatUsers = {};
 
 Chat currentChat = Chat(chatID: '', chatName: '', members: '');
 
@@ -66,10 +69,11 @@ class SocketConnection {
           print(releasingQueue);
         }
       } else if (openData.containsKey(decodedMessage['chatID']) == false) {
-        List previousMessages = [];
-        previousMessages = openData.get(decodedMessage['chatID']);
-        previousMessages.add(message);
-        openData.put(decodedMessage['chatID'], previousMessages);
+        openData.put(decodedMessage['chatID'], message);
+        if (releasingQueue) {
+          sendMessage(messageEncoder(
+              '_SystemMessage:_releaseQueue', 'system', '_releaseQueueNext'));
+        }
       } else {
         List previousMessages = [];
         if (openData.get(decodedMessage['chatID']) != null)
@@ -106,3 +110,32 @@ String messageEncoder(chatID, userID, message) {
 }
 
 var currentTheme;
+
+// miscellaneous functions
+chatInitializer() async {
+  List currentChatMembersIDsList = currentChat.members.split(',');
+  List currentProjectMembersIDsList = currentProject.projectMembers.split(',');
+  currentChatMembersList = [];
+  currentProjectMembersList = [];
+
+  for (var memberID in currentChatMembersIDsList) {
+    User tempUser = User();
+    if (memberID != '' && memberID != ' ') {
+      final response = await retrieveUserFromID(memberID);
+      if (int.parse(response[0]) == 200) {
+        tempUser.initializeFromJSON(response[1]);
+        currentChatMembersList.add(tempUser);
+      }
+    }
+  }
+  for (var memberID in currentProjectMembersIDsList) {
+    User tempUser = User();
+    if (memberID != '' && memberID != ' ') {
+      final response = await retrieveUserFromID(memberID);
+      if (int.parse(response[0]) == 200) {
+        tempUser.initializeFromJSON(response[1]);
+        currentProjectMembersList.add(tempUser);
+      }
+    }
+  }
+}

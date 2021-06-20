@@ -20,4 +20,11 @@ class User {
     this.projects = givenData['projects'];
     this.joinedOn = givenData['joinedOn'];
   }
+
+  empty() {
+    this.username = '';
+    this.userID = '';
+    this.projects = '';
+    this.joinedOn = '';
+  }
 }

@@ -72,7 +72,10 @@ class _ChatSettingsPageState extends State<ChatSettingsPage>
                     leading: IconButton(
                       icon: Icon(Icons.arrow_back_ios_new,
                           color: currentTheme.backgroundColor),
-                      onPressed: () {
+                      onPressed: () async {
+                        await SocketConnection.instance.sendMessage(
+                            messageEncoder('_SystemMessage:NewChatOpened',
+                                currentChat.chatID, currentChat.members));
                         Navigator.pop(context);
                       },
                     ),
@@ -472,7 +475,7 @@ class _ChatSettingsPageState extends State<ChatSettingsPage>
                 content: Text('Deletion under progress!'),
                 duration: Duration(seconds: 4),
               ));
-              await chatMemberDelete(userID: member.userID);
+              await chatMemberDelete(username: member.username);
               setState(() {});
             },
           ),

@@ -45,6 +45,18 @@ class Project {
     this.projectTasks = givenData['projectTasks'];
   }
 
+  empty() {
+    this.projectID = '';
+    this.projectName = '';
+    this.projectCreatedOn = '';
+    this.projectRepoLink = '';
+    this.projectAdmin = '';
+    this.projectMembers = '';
+    this.projectDescription = '';
+    this.projectChatList = '';
+    this.projectTasks = '';
+  }
+
   String details() {
     if (this.projectDescription != '')
       return this.projectDescription +

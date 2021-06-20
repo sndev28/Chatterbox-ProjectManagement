@@ -17,4 +17,10 @@ class Chat {
     this.members = givenData['members'];
     this.chatName = givenData['chatName'];
   }
+
+  empty() {
+    this.chatID = '';
+    this.members = '';
+    this.chatName = '';
+  }
 }

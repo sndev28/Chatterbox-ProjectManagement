@@ -2,7 +2,7 @@ import requests
 import json
 
 
-BASE_URI = 'http://192.168.1.36:5000/'
+BASE_URI = 'http://192.168.1.37:5000/'
 
 # data = {
 #     'projectID': 'PR_ID_ZJCBK8SIK2W1LAL',
@@ -21,11 +21,12 @@ BASE_URI = 'http://192.168.1.36:5000/'
 #     }
 
 data = {
-    'username': 'ha',
-    'updateCommand': 'checkLike'
+    'chatID': 'CH_ID_TKKHHY1DZILSG1P',
+    'members': '2',
+    'updateCommand': 'chatMemberDelete'
 }
 
-response = requests.post(BASE_URI + 'user', data=data)
+response = requests.delete(BASE_URI + 'chatdetails', data=data)
 
 # meh = response.text.split(',')
 # meh2 = [item + '}' for item in meh if item != '']
@@ -33,4 +34,4 @@ response = requests.post(BASE_URI + 'user', data=data)
 # print(meh)
 
 
-print(json.loads(response.text)['matches'])
+print(json.loads(response.text)['members'])

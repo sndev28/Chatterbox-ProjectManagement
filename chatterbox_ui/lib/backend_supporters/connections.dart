@@ -58,10 +58,11 @@ void userUpdate() async {
     userUri,
     headers: {'Content-Type': 'application/json'},
     body: jsonEncode(<String, String>{
-      'username': currentUser.username,
+      'userID': currentUser.userID,
       'updateCommand': 'retrieveUserFromID',
     }),
   );
+  print(response.body + "THIS IS THE RESPONSE");
 
   if (response.statusCode == 200) currentUser.initializeFromJSON(response.body);
 }
@@ -385,7 +386,36 @@ Future<void> deleteAllTasks() async {
   }
 }
 
-Future<void> chatMemberAdd({String userID = '', String username = ''}) async {}
+Future<void> chatMemberAdd({String username = ''}) async {
+  Response response = await patch(
+    chatUri,
+    headers: {'Content-Type': 'application/json'},
+    body: json.encode(<String, String>{
+      'chatID': currentChat.chatID,
+      'members': username,
+      'updateCommand': 'chatMemberAdd',
+    }),
+  );
 
-Future<void> chatMemberDelete(
-    {String userID = '', String username = ''}) async {}
+  if (response.statusCode == 200) {
+    currentChat.initializeFromJSON(response.body);
+    await chatInitializer();
+  }
+}
+
+Future<void> chatMemberDelete({String username = ''}) async {
+  Response response = await delete(
+    chatUri,
+    headers: {'Content-Type': 'application/json'},
+    body: json.encode(<String, String>{
+      'chatID': currentChat.chatID,
+      'members': username,
+      'updateCommand': 'chatMemberDelete',
+    }),
+  );
+
+  if (response.statusCode == 200) {
+    currentChat.initializeFromJSON(response.body);
+    await chatInitializer();
+  }
+}

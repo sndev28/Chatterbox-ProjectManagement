@@ -3,7 +3,6 @@ import 'package:chatterbox_ui/models/globals.dart';
 import 'package:chatterbox_ui/models/user.dart';
 import 'package:chatterbox_ui/styles/font_styles.dart';
 import 'package:flutter/material.dart';
-import 'package:async/async.dart';
 
 class ProjectSettingsMembersPage extends StatefulWidget {
   const ProjectSettingsMembersPage({Key? key}) : super(key: key);

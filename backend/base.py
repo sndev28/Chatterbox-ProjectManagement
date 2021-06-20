@@ -1,4 +1,5 @@
 from hashlib import new
+from re import I
 from flask import Flask
 from flask_restful import Api, Resource, reqparse, abort
 from flask_sqlalchemy import SQLAlchemy
@@ -57,6 +58,7 @@ chatArgs = reqparse.RequestParser()
 chatArgs.add_argument('chatID', type = str, help = 'chatID not sent!')
 chatArgs.add_argument('chatName', type = str, help = 'chatName not sent!')
 chatArgs.add_argument('members', type = str, help = 'members not sent!')
+chatArgs.add_argument('updateCommand', type = str, help = 'chatArgs not sent')
 
 
 
@@ -85,7 +87,46 @@ class Chats(Resource):
         print(retrieved_chat.toJSON())
         return retrieved_chat.toJSON()
 
+    def patch(self):
+        args = chatArgs.parse_args()
 
+        if args['updateCommand'] == 'chatMemberAdd':
+            chat = ChatDetails.query.filter_by(chatID = args['chatID']).first()
+            user = UserDetails.query.filter_by(username = args['members']).first()
+            
+            if chat.members == None or chat.members == '':
+                chat.members = user.userID + ','
+            else:
+                chat.members += user.userID + ','
+            
+            db.session.commit()
+
+        return chat.toJSON()
+
+    def delete(self):
+        args = chatArgs.parse_args()
+
+        if args['updateCommand'] == 'chatMemberDelete':
+            chat = ChatDetails.query.filter_by(chatID = args['chatID']).first()
+            user = UserDetails.query.filter_by(username = args['members']).first()
+
+            listOfMembers = chat.members.split(',')
+
+            if user.userID in listOfMembers:
+                listOfMembers.remove(user.userID)
+
+            stringOfMembers = ''
+        
+            for member in listOfMembers:
+                if member != '':
+                    stringOfMembers += member + ','
+            
+            chat.members = stringOfMembers
+
+            db.session.commit()
+
+        
+        return chat.toJSON()
 
 
 
@@ -168,7 +209,7 @@ class Projects(Resource):
 
         projectCreatedOn = datetime.now().strftime('%B %d, %Y %H:%M')
         projectID = 'PR_ID_' + ''.join(random.choices(string.ascii_uppercase + string.digits, k = 15))
-        newProject = ProjectDetails(projectName = args['projectName'], projectAdmin = args['projectAdmin'], projectRepoLink = args['projectRepoLink'], projectDescription = args['projectDescription'], projectID = projectID, projectCreatedOn = projectCreatedOn)
+        newProject = ProjectDetails(projectName = args['projectName'], projectAdmin = args['projectAdmin'], projectRepoLink = args['projectRepoLink'], projectDescription = args['projectDescription'], projectID = projectID, projectCreatedOn = projectCreatedOn, projectMembers = args['projectAdmin'] + ',')
 
         db.session.add(newProject)
         db.session.commit()
@@ -206,9 +247,15 @@ class Projects(Resource):
             db.session.commit()
 
         elif args['updateCommand'] == 'members_userID':
+            user = UserDetails.query.filter_by(userID = args['projectMembers']).first()
+            if user == None:
+                return 'No user found!', 404
             if  project.projectMembers == None:
                 project.projectMembers = args['projectMembers'] + ','
             else: project.projectMembers += args['projectMembers'] + ','
+
+            user.projects += project.projectID + ','
+
             db.session.commit()
 
         elif args['updateCommand'] == 'members_username':
@@ -218,6 +265,9 @@ class Projects(Resource):
             if  project.projectMembers == None:
                 project.projectMembers = user.userID + ','
             else: project.projectMembers += user.userID + ','
+            
+            user.projects += project.projectID + ','
+
             db.session.commit()
 
         elif args['updateCommand'] == 'projectRepoLink':

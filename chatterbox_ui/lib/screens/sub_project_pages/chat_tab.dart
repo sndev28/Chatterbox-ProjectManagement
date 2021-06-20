@@ -1,3 +1,4 @@
+import 'package:chatterbox_ui/models/user.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import '../../styles/font_styles.dart';
@@ -282,6 +283,15 @@ class _ChatTabState extends State<ChatTab> {
                   '_SystemMessage:NewChatOpened',
                   currentChat.chatID,
                   currentChat.members));
+              List listOfMembers = currentChat.members.split(',');
+              for (var member in listOfMembers) {
+                if (member != '' && member != ' ') {
+                  User tempUser = User();
+                  List userData = await retrieveUserFromID(member);
+                  tempUser.initializeFromJSON(userData[1]);
+                  chatUsers[member] = tempUser;
+                }
+              }
               Navigator.pushNamed(context, CHATDIR);
             },
           ),

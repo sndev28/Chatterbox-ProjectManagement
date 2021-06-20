@@ -1,4 +1,3 @@
-import 'dart:convert';
 import 'package:hive/hive.dart';
 import '../styles/font_styles.dart';
 import 'package:flutter/material.dart';
@@ -29,19 +28,8 @@ class _HomeState extends State<Home> {
   }
 
   projectInitializer() async {
-    // var now = DateTime.now();
-    // String dmCreationTime = DateFormat.yMMMMd().add_Hm().format(now);
     openData = await Hive.openBox(currentUser.userID);
     SocketConnection.instance.initializeSocket();
-
-    // Project directMessage = Project(
-    //     projectID: 'DM',
-    //     projectName: 'Direct Messages',
-    //     projectCreatedOn: dmCreationTime,
-    //     projectRepoLink: '',
-    //     projectAdmin: currentUser.userID,
-    //     projectDescription: 'Direct messages with friends');
-    // projectList.add(directMessage);
 
     final List<String> projectIDsFromDatabase = currentUser.projects.split(',');
     projectList = [];
@@ -90,23 +78,39 @@ class _HomeState extends State<Home> {
                       SingleChildScrollView(
                         child: Padding(
                           padding: const EdgeInsets.only(top: 80),
-                          child: ReorderableListView.builder(
-                              itemCount: projectList.length,
-                              primary: false,
-                              shrinkWrap: true,
-                              onReorder: (oldIndex, newIndex) {
-                                setState(() {
-                                  if (newIndex > oldIndex) {
-                                    newIndex = newIndex - 1;
-                                  }
-                                  final element =
-                                      projectList.removeAt(oldIndex);
-                                  projectList.insert(newIndex, element);
-                                });
-                              },
-                              padding: EdgeInsets.all(16.0),
-                              itemBuilder: (context, index) =>
-                                  _cardGenerator(projectList[index])),
+                          child: RefreshIndicator(
+                            child: ReorderableListView.builder(
+                                physics: AlwaysScrollableScrollPhysics(),
+                                itemCount: projectList.length,
+                                primary: false,
+                                shrinkWrap: true,
+                                onReorder: (oldIndex, newIndex) {
+                                  setState(() {
+                                    if (newIndex > oldIndex) {
+                                      newIndex = newIndex - 1;
+                                    }
+                                    final element =
+                                        projectList.removeAt(oldIndex);
+                                    projectList.insert(newIndex, element);
+                                  });
+                                },
+                                padding: EdgeInsets.all(16.0),
+                                itemBuilder: (context, index) =>
+                                    _cardGenerator(projectList[index])),
+                            onRefresh: () async {
+                              final List<String> projectIDsFromDatabase =
+                                  currentUser.projects.split(',');
+                              projectList = [];
+                              for (var projectID in projectIDsFromDatabase) {
+                                if (projectID != '') {
+                                  Project newProject =
+                                      await retrieveProjectFromID(projectID);
+                                  projectList.add(newProject);
+                                }
+                              }
+                              setState(() {});
+                            },
+                          ),
                         ),
                       ),
                       Container(
@@ -305,33 +309,30 @@ class _HomeState extends State<Home> {
 
                                               if (response[0] == '200') {
                                                 resultText = 'Project created!';
-                                                Map responseJson =
-                                                    jsonDecode(response[1]);
-                                                Project newProject = Project(
-                                                    projectID: responseJson[
-                                                        'projectID'],
-                                                    projectName: responseJson[
-                                                        'projectName'],
-                                                    projectCreatedOn:
-                                                        responseJson[
-                                                            'projectCreatedOn'],
-                                                    projectRepoLink:
-                                                        responseJson[
-                                                            'projectRepoLink'],
-                                                    projectAdmin: responseJson[
-                                                        'projectAdmin'],
-                                                    projectDescription:
-                                                        responseJson[
-                                                            'projectDescription']);
-                                                setState(() {
-                                                  projectList.add(newProject);
-                                                });
+
                                                 Navigator.pop(context);
                                                 projectNameController.text = '';
                                                 projectDescriptionController
                                                     .text = '';
                                                 projectRepoLinkController.text =
                                                     '';
+                                                userUpdate();
+                                                final List<String>
+                                                    projectIDsFromDatabase =
+                                                    currentUser.projects
+                                                        .split(',');
+                                                projectList = [];
+                                                for (var projectID
+                                                    in projectIDsFromDatabase) {
+                                                  if (projectID != '') {
+                                                    Project newProject =
+                                                        await retrieveProjectFromID(
+                                                            projectID);
+                                                    projectList.add(newProject);
+                                                  }
+                                                  projectRetrieved = true;
+                                                }
+                                                setState(() {});
                                               }
                                               ScaffoldMessenger.of(context)
                                                   .showSnackBar(SnackBar(
