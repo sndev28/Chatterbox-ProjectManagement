@@ -18,6 +18,7 @@ class LoginScreen extends StatelessWidget {
         ),
       ),
       child: Scaffold(
+        resizeToAvoidBottomInset: false,
         backgroundColor: Colors.transparent,
         body: ScrollConfiguration(
           behavior: MyBehavior(),
@@ -40,21 +41,14 @@ class LoginScreen extends StatelessWidget {
                         bottomLeft: Radius.circular(30),
                         bottomRight: Radius.circular(30),
                       )),
-                  child: Column(
-                    mainAxisAlignment: MainAxisAlignment.end,
-                    crossAxisAlignment: CrossAxisAlignment.stretch,
-                    children: [
-                      Padding(
-                        padding: EdgeInsets.only(left: 15, right: 15),
-                        child: Align(
-                          alignment: Alignment.centerLeft,
-                          child: FittedBox(
-                              fit: BoxFit.scaleDown,
-                              child: Text('ChatterBox',
-                                  style: loginAppTitleStyle)),
-                        ),
-                      ),
-                    ],
+                  child: Padding(
+                    padding: EdgeInsets.only(left: 15, right: 15),
+                    child: Align(
+                      alignment: Alignment.bottomLeft,
+                      child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Text('ChatterBox', style: loginAppTitleStyle)),
+                    ),
                   ),
                 ),
                 Container(

@@ -19,6 +19,7 @@ class _ProjectPageState extends State<ProjectPage> {
       child: Scaffold(
           backgroundColor: Colors.transparent,
           appBar: AppBar(
+            toolbarHeight: 40,
             elevation: 0,
             backgroundColor: currentTheme.secondaryColor,
             foregroundColor: currentTheme.secondaryColor,
@@ -61,7 +62,7 @@ class _ProjectPageState extends State<ProjectPage> {
               child: Container(
                 padding: EdgeInsets.only(bottom: 7),
                 width: MediaQuery.of(context).size.width,
-                height: 80,
+                height: 95,
                 decoration: BoxDecoration(
                   color: currentTheme.secondaryColor,
                   borderRadius: BorderRadius.only(
@@ -78,18 +79,12 @@ class _ProjectPageState extends State<ProjectPage> {
                     )
                   ],
                 ),
-                child: Column(
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                  children: [
-                    Align(
-                      alignment: Alignment.center,
-                      child: FittedBox(
-                          fit: BoxFit.scaleDown,
-                          child: Text(currentProject.projectName,
-                              style: homeUserStyle)),
-                    ),
-                  ],
+                child: Align(
+                  alignment: Alignment.center,
+                  child: FittedBox(
+                      fit: BoxFit.scaleDown,
+                      child: Text(currentProject.projectName,
+                          style: homeUserStyle)),
                 ),
               ),
             ),

@@ -77,6 +77,7 @@ class _UserProfileState extends State<UserProfile>
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
+          toolbarHeight: 40,
           elevation: 0,
           backgroundColor: currentTheme.secondaryColor,
           foregroundColor: currentTheme.secondaryColor,
@@ -106,7 +107,7 @@ class _UserProfileState extends State<UserProfile>
             ),
             Container(
               width: MediaQuery.of(context).size.width,
-              height: 80,
+              height: 95,
               decoration: BoxDecoration(
                 color: currentTheme.secondaryColor,
                 borderRadius: BorderRadius.only(
@@ -122,22 +123,16 @@ class _UserProfileState extends State<UserProfile>
                   )
                 ],
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(left: 25, bottom: 7, right: 25),
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Text(currentUser.username + ' : User',
-                            style: homeUserStyle),
-                      ),
-                    ),
+              child: Padding(
+                padding: EdgeInsets.only(left: 25, right: 25),
+                child: Align(
+                  alignment: Alignment.centerRight,
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(currentUser.username + ' : User',
+                        style: homeUserStyle),
                   ),
-                ],
+                ),
               ),
             ),
           ],

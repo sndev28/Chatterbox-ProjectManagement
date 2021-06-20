@@ -36,7 +36,7 @@ class _ChatterBoxState extends State<ChatterBox> {
 
   RouteFactory _routes() {
     return (settings) {
-      final arguments = settings.arguments;
+      // final arguments = settings.arguments;
 
       Widget screen;
 

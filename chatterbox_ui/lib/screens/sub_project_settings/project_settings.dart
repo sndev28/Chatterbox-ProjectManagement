@@ -136,22 +136,16 @@ class _ProjectSettingsProjectPageState extends State<ProjectSettingsProjectPage>
                   )
                 ],
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Padding(
-                    padding: EdgeInsets.only(left: 25, bottom: 7, right: 25),
-                    child: Align(
-                      alignment: Alignment.centerRight,
-                      child: FittedBox(
-                        fit: BoxFit.scaleDown,
-                        child: Text(currentProject.projectName + ' : Project',
-                            style: homeUserStyle),
-                      ),
-                    ),
+              child: Padding(
+                padding: EdgeInsets.only(left: 25, bottom: 7, right: 25),
+                child: Align(
+                  alignment: Alignment.bottomRight,
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
+                    child: Text(currentProject.projectName + ' : Project',
+                        style: homeUserStyle),
                   ),
-                ],
+                ),
               ),
             ),
           ],
@@ -201,7 +195,7 @@ class _ProjectSettingsProjectPageState extends State<ProjectSettingsProjectPage>
                   ),
                   child: Center(
                     child: Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: TextField(
                           maxLines: null,
                           controller: projectNameController,
@@ -211,7 +205,7 @@ class _ProjectSettingsProjectPageState extends State<ProjectSettingsProjectPage>
                           style: TextStyle(
                             color: currentTheme.textFontColor,
                             fontWeight: FontWeight.w500,
-                            fontSize: 24.0,
+                            fontSize: 20.0,
                             fontFamily: 'Pacifico',
                           )),
                     ),
@@ -280,10 +274,13 @@ class _ProjectSettingsProjectPageState extends State<ProjectSettingsProjectPage>
                     child: Center(
                         child: RotatedBox(
                             quarterTurns: 3,
-                            child: Text(
-                              'RepoLink',
-                              style: infoTitleTheme,
-                              maxLines: 1,
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                'RepoLink',
+                                style: infoTitleTheme,
+                                maxLines: 1,
+                              ),
                             )))),
               ),
               Expanded(
@@ -294,9 +291,9 @@ class _ProjectSettingsProjectPageState extends State<ProjectSettingsProjectPage>
                   ),
                   child: Center(
                     child: Padding(
-                      padding: const EdgeInsets.all(8.0),
+                      padding: const EdgeInsets.symmetric(horizontal: 8.0),
                       child: TextField(
-                          maxLines: null,
+                          maxLines: 1,
                           controller: projectRepoLinkController,
                           onChanged: (changedText) {
                             _tickAnimationRepoLinkController.forward();
@@ -304,7 +301,7 @@ class _ProjectSettingsProjectPageState extends State<ProjectSettingsProjectPage>
                           style: TextStyle(
                             color: currentTheme.textFontColor,
                             fontWeight: FontWeight.w500,
-                            fontSize: 24.0,
+                            fontSize: 20.0,
                             fontFamily: 'Pacifico',
                           )),
                     ),
@@ -397,7 +394,7 @@ class _ProjectSettingsProjectPageState extends State<ProjectSettingsProjectPage>
                           style: TextStyle(
                             color: currentTheme.textFontColor,
                             fontWeight: FontWeight.w500,
-                            fontSize: 24.0,
+                            fontSize: 20.0,
                             fontFamily: 'Pacifico',
                           )),
                     ),

@@ -76,122 +76,140 @@ class _ChatTabState extends State<ChatTab> {
                                     borderRadius: BorderRadius.all(
                                         Radius.circular(10.0))),
                                 child: Container(
-                                    height: 350,
+                                    height: 250,
                                     width: 100,
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.stretch,
-                                      children: [
-                                        Container(
-                                          height: 300,
-                                          width: 100,
-                                          child: Column(
+                                    child: ListView(
+                                        primary: false,
+                                        shrinkWrap: true,
+                                        children: [
+                                          Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.stretch,
                                             children: [
-                                              Center(
-                                                  child: Text(
-                                                'Create Chat',
-                                                style:
-                                                    createProjectDialogueHeadingTheme,
-                                              )),
+                                              Container(
+                                                height: 200,
+                                                width: 100,
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment
+                                                          .stretch,
+                                                  children: [
+                                                    Center(
+                                                        child: Text(
+                                                      'Create Chat',
+                                                      style:
+                                                          createProjectDialogueHeadingTheme,
+                                                    )),
+                                                    Padding(
+                                                      padding: EdgeInsets.only(
+                                                          top: 10,
+                                                          left: 10,
+                                                          right: 10),
+                                                      child: TextField(
+                                                        cursorColor:
+                                                            Colors.white,
+                                                        controller:
+                                                            chatNameController,
+                                                        decoration: InputDecoration(
+                                                            border:
+                                                                UnderlineInputBorder(),
+                                                            contentPadding:
+                                                                EdgeInsets.all(
+                                                                    8.0),
+                                                            labelText:
+                                                                'Chat Name',
+                                                            hintText:
+                                                                'Enter chat name',
+                                                            suffixIcon: Icon(
+                                                                Icons.edit)),
+                                                      ),
+                                                    ),
+                                                  ],
+                                                ),
+                                              ),
                                               Padding(
-                                                padding: EdgeInsets.only(
-                                                    top: 10,
-                                                    left: 10,
-                                                    right: 10),
-                                                child: TextField(
-                                                  cursorColor: Colors.white,
-                                                  controller:
-                                                      chatNameController,
-                                                  decoration: InputDecoration(
-                                                      border:
-                                                          UnderlineInputBorder(),
-                                                      contentPadding:
-                                                          EdgeInsets.all(8.0),
-                                                      labelText: 'Chat Name',
-                                                      hintText:
-                                                          'Enter chat name',
-                                                      suffixIcon:
-                                                          Icon(Icons.edit)),
+                                                padding: const EdgeInsets.only(
+                                                    bottom: 5),
+                                                child: InkWell(
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      color: currentTheme
+                                                          .primaryColor,
+                                                      shape: BoxShape.circle,
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          color: Colors.black,
+                                                          blurRadius: 2.0,
+                                                          spreadRadius: 0.0,
+                                                          offset: Offset(0.0,
+                                                              0.0), // shadow direction: bottom right
+                                                        )
+                                                      ],
+                                                    ),
+                                                    child: Icon(
+                                                      Icons.add,
+                                                      color: Colors.grey[800],
+                                                      size: 40,
+                                                    ),
+                                                  ),
+                                                  onTap: () async {
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(SnackBar(
+                                                      content: Text(
+                                                          'Chat is being created!'),
+                                                      duration:
+                                                          Duration(seconds: 2),
+                                                    ));
+                                                    final response =
+                                                        await chatCreator(
+                                                            chatName:
+                                                                chatNameController
+                                                                    .text);
+
+                                                    String resultText =
+                                                        'Chat could not be created!';
+
+                                                    if (response[0] == '200') {
+                                                      resultText =
+                                                          'Chat created!';
+                                                      Map responseJson =
+                                                          jsonDecode(
+                                                              response[1]);
+                                                      Chat newChat = Chat(
+                                                          chatID: responseJson[
+                                                              'chatID'],
+                                                          chatName:
+                                                              responseJson[
+                                                                  'chatName'],
+                                                          members: responseJson[
+                                                              'members']);
+                                                      projectUpdate();
+                                                      await chatInitializer();
+                                                      setState(() {});
+                                                      openData.put(
+                                                          newChat.chatID,
+                                                          <String>[]);
+                                                      Navigator.pop(context);
+                                                      chatNameController.text =
+                                                          '';
+                                                    }
+
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(SnackBar(
+                                                      content: Text(resultText),
+                                                      duration:
+                                                          Duration(seconds: 4),
+                                                    ));
+                                                  },
                                                 ),
                                               ),
                                             ],
                                           ),
-                                        ),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(bottom: 5),
-                                          child: InkWell(
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                color:
-                                                    currentTheme.primaryColor,
-                                                shape: BoxShape.circle,
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: Colors.black,
-                                                    blurRadius: 2.0,
-                                                    spreadRadius: 0.0,
-                                                    offset: Offset(0.0,
-                                                        0.0), // shadow direction: bottom right
-                                                  )
-                                                ],
-                                              ),
-                                              child: Icon(
-                                                Icons.add,
-                                                color: Colors.grey[800],
-                                                size: 40,
-                                              ),
-                                            ),
-                                            onTap: () async {
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(SnackBar(
-                                                content: Text(
-                                                    'Chat is being created!'),
-                                                duration: Duration(seconds: 2),
-                                              ));
-                                              final response =
-                                                  await chatCreator(
-                                                      chatName:
-                                                          chatNameController
-                                                              .text);
-
-                                              String resultText =
-                                                  'Chat could not be created!';
-
-                                              if (response[0] == '200') {
-                                                resultText = 'Chat created!';
-                                                Map responseJson =
-                                                    jsonDecode(response[1]);
-                                                Chat newChat = Chat(
-                                                    chatID:
-                                                        responseJson['chatID'],
-                                                    chatName: responseJson[
-                                                        'chatName'],
-                                                    members: responseJson[
-                                                        'members']);
-                                                projectUpdate();
-                                                await chatInitializer();
-                                                setState(() {});
-                                                openData.put(
-                                                    newChat.chatID, <String>[]);
-                                                Navigator.pop(context);
-                                                chatNameController.text = '';
-                                              }
-
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(SnackBar(
-                                                content: Text(resultText),
-                                                duration: Duration(seconds: 4),
-                                              ));
-                                            },
-                                          ),
-                                        ),
-                                      ],
-                                    )),
+                                        ])),
                               ));
                     },
                   ),
@@ -256,22 +274,32 @@ class _ChatTabState extends State<ChatTab> {
           shape: RoundedRectangleBorder(
               borderRadius: BorderRadius.all(Radius.circular(12))),
           child: ListTile(
-            title: Row(
-              mainAxisAlignment: MainAxisAlignment.start,
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Icon(
-                  Icons.drag_handle,
-                  color: Colors.red[200],
+            title: Align(
+              alignment: Alignment.centerLeft,
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.start,
+                  mainAxisSize: MainAxisSize.min,
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                  children: [
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Icon(
+                        Icons.drag_handle,
+                        color: Colors.red[200],
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(left: 12, right: 125),
+                      child: Text(
+                        cardTitle,
+                        style: chatCardSubTitleTheme,
+                      ),
+                    ),
+                  ],
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 12, right: 125),
-                  child: Text(
-                    cardTitle,
-                    style: chatCardSubTitleTheme,
-                  ),
-                ),
-              ],
+              ),
             ),
             trailing: Icon(
               Icons.arrow_forward_ios_outlined,

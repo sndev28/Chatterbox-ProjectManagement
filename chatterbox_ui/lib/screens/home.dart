@@ -58,8 +58,10 @@ class _HomeState extends State<Home> {
                 return Text(snapshot.error.toString());
               else
                 return Scaffold(
+                  resizeToAvoidBottomInset: false,
                   backgroundColor: Colors.transparent,
                   appBar: AppBar(
+                    toolbarHeight: 40,
                     elevation: 0,
                     backgroundColor: currentTheme.secondaryColor,
                     foregroundColor: currentTheme.secondaryColor,
@@ -115,7 +117,7 @@ class _HomeState extends State<Home> {
                       ),
                       Container(
                         width: MediaQuery.of(context).size.width,
-                        height: 80,
+                        height: 95,
                         decoration: BoxDecoration(
                           color: currentTheme.secondaryColor,
                           borderRadius: BorderRadius.only(
@@ -132,22 +134,12 @@ class _HomeState extends State<Home> {
                             )
                           ],
                         ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.only(
-                                  left: 25, bottom: 7, right: 25),
-                              child: Align(
-                                alignment: Alignment.centerLeft,
-                                child: FittedBox(
-                                    fit: BoxFit.scaleDown,
-                                    child:
-                                        Text('Projects', style: homeUserStyle)),
-                              ),
-                            ),
-                          ],
+                        child: Padding(
+                          padding: const EdgeInsets.only(left: 8.0),
+                          child: Align(
+                            alignment: Alignment.centerLeft,
+                            child: Text('Projects', style: homeUserStyle),
+                          ),
                         ),
                       ),
                     ],
@@ -171,179 +163,199 @@ class _HomeState extends State<Home> {
                                 child: Container(
                                     height: 350,
                                     width: 100,
-                                    child: Column(
-                                      mainAxisAlignment:
-                                          MainAxisAlignment.spaceBetween,
-                                      crossAxisAlignment:
-                                          CrossAxisAlignment.stretch,
-                                      children: [
-                                        Container(
-                                          height: 300,
-                                          width: 100,
-                                          child: Column(
+                                    child: ListView(
+                                        primary: false,
+                                        shrinkWrap: true,
+                                        children: [
+                                          Center(
+                                              child: Text(
+                                            'Create Project',
+                                            style:
+                                                createProjectDialogueHeadingTheme,
+                                          )),
+                                          Column(
+                                            mainAxisAlignment:
+                                                MainAxisAlignment.spaceBetween,
                                             crossAxisAlignment:
                                                 CrossAxisAlignment.stretch,
                                             children: [
-                                              Center(
-                                                  child: Text(
-                                                'Create Project',
-                                                style:
-                                                    createProjectDialogueHeadingTheme,
-                                              )),
-                                              Padding(
-                                                padding: EdgeInsets.only(
-                                                    top: 10,
-                                                    left: 10,
-                                                    right: 10),
-                                                child: TextField(
-                                                  cursorColor: Colors.white,
-                                                  controller:
-                                                      projectNameController,
-                                                  decoration: InputDecoration(
-                                                      border:
-                                                          UnderlineInputBorder(),
-                                                      contentPadding:
-                                                          EdgeInsets.all(8.0),
-                                                      labelText: 'Project Name',
-                                                      hintText:
-                                                          'Enter project name',
-                                                      suffixIcon:
-                                                          Icon(Icons.edit)),
+                                              Container(
+                                                height: 250,
+                                                width: 100,
+                                                child: Column(
+                                                  crossAxisAlignment:
+                                                      CrossAxisAlignment
+                                                          .stretch,
+                                                  children: [
+                                                    Padding(
+                                                      padding: EdgeInsets.only(
+                                                          top: 10,
+                                                          left: 10,
+                                                          right: 10),
+                                                      child: TextField(
+                                                        cursorColor:
+                                                            Colors.white,
+                                                        controller:
+                                                            projectNameController,
+                                                        decoration: InputDecoration(
+                                                            border:
+                                                                UnderlineInputBorder(),
+                                                            contentPadding:
+                                                                EdgeInsets.all(
+                                                                    8.0),
+                                                            labelText:
+                                                                'Project Name',
+                                                            hintText:
+                                                                'Enter project name',
+                                                            suffixIcon: Icon(
+                                                                Icons.edit)),
+                                                      ),
+                                                    ),
+                                                    Padding(
+                                                      padding: EdgeInsets.only(
+                                                          top: 10,
+                                                          left: 10,
+                                                          right: 10),
+                                                      child: TextField(
+                                                        cursorColor:
+                                                            Colors.white,
+                                                        maxLines: null,
+                                                        controller:
+                                                            projectDescriptionController,
+                                                        decoration: InputDecoration(
+                                                            border:
+                                                                UnderlineInputBorder(),
+                                                            contentPadding:
+                                                                EdgeInsets.all(
+                                                                    8.0),
+                                                            labelText:
+                                                                'Project Description',
+                                                            hintText:
+                                                                'Enter project description',
+                                                            suffixIcon: Icon(
+                                                                Icons.edit)),
+                                                      ),
+                                                    ),
+                                                    Padding(
+                                                      padding: EdgeInsets.only(
+                                                          top: 10,
+                                                          left: 10,
+                                                          right: 10),
+                                                      child: TextField(
+                                                        cursorColor:
+                                                            Colors.white,
+                                                        controller:
+                                                            projectRepoLinkController,
+                                                        decoration: InputDecoration(
+                                                            border:
+                                                                UnderlineInputBorder(),
+                                                            contentPadding:
+                                                                EdgeInsets.all(
+                                                                    8.0),
+                                                            labelText:
+                                                                'Project Repo Link',
+                                                            hintText:
+                                                                'Enter project link(optional)',
+                                                            suffixIcon: Icon(
+                                                                Icons.edit)),
+                                                      ),
+                                                    ),
+                                                  ],
                                                 ),
                                               ),
                                               Padding(
-                                                padding: EdgeInsets.only(
-                                                    top: 10,
-                                                    left: 10,
-                                                    right: 10),
-                                                child: TextField(
-                                                  cursorColor: Colors.white,
-                                                  maxLines: null,
-                                                  controller:
-                                                      projectDescriptionController,
-                                                  decoration: InputDecoration(
-                                                      border:
-                                                          UnderlineInputBorder(),
-                                                      contentPadding:
-                                                          EdgeInsets.all(8.0),
-                                                      labelText:
-                                                          'Project Description',
-                                                      hintText:
-                                                          'Enter project description',
-                                                      suffixIcon:
-                                                          Icon(Icons.edit)),
-                                                ),
-                                              ),
-                                              Padding(
-                                                padding: EdgeInsets.only(
-                                                    top: 10,
-                                                    left: 10,
-                                                    right: 10),
-                                                child: TextField(
-                                                  cursorColor: Colors.white,
-                                                  controller:
-                                                      projectRepoLinkController,
-                                                  decoration: InputDecoration(
-                                                      border:
-                                                          UnderlineInputBorder(),
-                                                      contentPadding:
-                                                          EdgeInsets.all(8.0),
-                                                      labelText:
-                                                          'Project Repo Link',
-                                                      hintText:
-                                                          'Enter project link(optional)',
-                                                      suffixIcon:
-                                                          Icon(Icons.edit)),
+                                                padding: const EdgeInsets.only(
+                                                    bottom: 5),
+                                                child: InkWell(
+                                                  child: Container(
+                                                    decoration: BoxDecoration(
+                                                      color: currentTheme
+                                                          .primaryColor,
+                                                      shape: BoxShape.circle,
+                                                      boxShadow: [
+                                                        BoxShadow(
+                                                          color: Colors.black,
+                                                          blurRadius: 2.0,
+                                                          spreadRadius: 0.0,
+                                                          offset: Offset(0.0,
+                                                              0.0), // shadow direction: bottom right
+                                                        )
+                                                      ],
+                                                    ),
+                                                    child: Icon(
+                                                      Icons.add,
+                                                      color: Colors.grey[800],
+                                                      size: 40,
+                                                    ),
+                                                  ),
+                                                  onTap: () async {
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(SnackBar(
+                                                      content: Text(
+                                                          'Project is being created!'),
+                                                      duration:
+                                                          Duration(seconds: 2),
+                                                    ));
+                                                    final response = await projectCreator(
+                                                        projectName:
+                                                            projectNameController
+                                                                .text,
+                                                        projectDescription:
+                                                            projectDescriptionController
+                                                                .text,
+                                                        projectRepoLink:
+                                                            projectRepoLinkController
+                                                                .text,
+                                                        projectAdmin:
+                                                            currentUser.userID);
+
+                                                    String resultText =
+                                                        'Project could not be created!';
+
+                                                    if (response[0] == '200') {
+                                                      resultText =
+                                                          'Project created!';
+
+                                                      Navigator.pop(context);
+                                                      projectNameController
+                                                          .text = '';
+                                                      projectDescriptionController
+                                                          .text = '';
+                                                      projectRepoLinkController
+                                                          .text = '';
+                                                      userUpdate();
+                                                      final List<String>
+                                                          projectIDsFromDatabase =
+                                                          currentUser.projects
+                                                              .split(',');
+                                                      projectList = [];
+                                                      for (var projectID
+                                                          in projectIDsFromDatabase) {
+                                                        if (projectID != '') {
+                                                          Project newProject =
+                                                              await retrieveProjectFromID(
+                                                                  projectID);
+                                                          projectList
+                                                              .add(newProject);
+                                                        }
+                                                        projectRetrieved = true;
+                                                      }
+                                                      setState(() {});
+                                                    }
+                                                    ScaffoldMessenger.of(
+                                                            context)
+                                                        .showSnackBar(SnackBar(
+                                                      content: Text(resultText),
+                                                      duration:
+                                                          Duration(seconds: 4),
+                                                    ));
+                                                  },
                                                 ),
                                               ),
                                             ],
                                           ),
-                                        ),
-                                        Padding(
-                                          padding:
-                                              const EdgeInsets.only(bottom: 5),
-                                          child: InkWell(
-                                            child: Container(
-                                              decoration: BoxDecoration(
-                                                color:
-                                                    currentTheme.primaryColor,
-                                                shape: BoxShape.circle,
-                                                boxShadow: [
-                                                  BoxShadow(
-                                                    color: Colors.black,
-                                                    blurRadius: 2.0,
-                                                    spreadRadius: 0.0,
-                                                    offset: Offset(0.0,
-                                                        0.0), // shadow direction: bottom right
-                                                  )
-                                                ],
-                                              ),
-                                              child: Icon(
-                                                Icons.add,
-                                                color: Colors.grey[800],
-                                                size: 40,
-                                              ),
-                                            ),
-                                            onTap: () async {
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(SnackBar(
-                                                content: Text(
-                                                    'Project is being created!'),
-                                                duration: Duration(seconds: 2),
-                                              ));
-                                              final response = await projectCreator(
-                                                  projectName:
-                                                      projectNameController
-                                                          .text,
-                                                  projectDescription:
-                                                      projectDescriptionController
-                                                          .text,
-                                                  projectRepoLink:
-                                                      projectRepoLinkController
-                                                          .text,
-                                                  projectAdmin:
-                                                      currentUser.userID);
-
-                                              String resultText =
-                                                  'Project could not be created!';
-
-                                              if (response[0] == '200') {
-                                                resultText = 'Project created!';
-
-                                                Navigator.pop(context);
-                                                projectNameController.text = '';
-                                                projectDescriptionController
-                                                    .text = '';
-                                                projectRepoLinkController.text =
-                                                    '';
-                                                userUpdate();
-                                                final List<String>
-                                                    projectIDsFromDatabase =
-                                                    currentUser.projects
-                                                        .split(',');
-                                                projectList = [];
-                                                for (var projectID
-                                                    in projectIDsFromDatabase) {
-                                                  if (projectID != '') {
-                                                    Project newProject =
-                                                        await retrieveProjectFromID(
-                                                            projectID);
-                                                    projectList.add(newProject);
-                                                  }
-                                                  projectRetrieved = true;
-                                                }
-                                                setState(() {});
-                                              }
-                                              ScaffoldMessenger.of(context)
-                                                  .showSnackBar(SnackBar(
-                                                content: Text(resultText),
-                                                duration: Duration(seconds: 4),
-                                              ));
-                                            },
-                                          ),
-                                        ),
-                                      ],
-                                    )),
+                                        ])),
                               ));
                     },
                   ),
@@ -382,43 +394,52 @@ class _HomeState extends State<Home> {
           child: Container(
             height: 120,
             child: Padding(
-              padding: const EdgeInsets.only(left: 3, top: 20, bottom: 10),
-              child: Stack(
-                // mainAxisAlignment: MainAxisAlignment.start,
-                // crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Align(
-                    alignment: Alignment.centerLeft,
-                    child: Icon(
-                      Icons.drag_handle,
-                      color: currentTheme.lighterPrimaryColor,
-                    ),
-                  ),
-                  Align(
-                    alignment: Alignment.center,
-                    child: Padding(
-                      padding: const EdgeInsets.only(left: 12, right: 125),
-                      child: Column(
-                        mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          Text(
-                            cardTitle,
-                            style: cardTitleTheme,
-                          ),
-                          Text(
-                            cardSubTitle,
-                            style: cardSubTitleTheme,
-                            overflow: TextOverflow.fade,
-                          ),
-                        ],
+              padding: const EdgeInsets.only(left: 5, top: 20, bottom: 10),
+              child: FittedBox(
+                fit: BoxFit.scaleDown,
+                child: Row(
+                  children: [
+                    Align(
+                      alignment: Alignment.centerLeft,
+                      child: Icon(
+                        Icons.drag_handle,
+                        color: currentTheme.lighterPrimaryColor,
                       ),
                     ),
-                  ),
-                  Align(
-                      alignment: Alignment.centerRight,
-                      child: Icon(Icons.arrow_forward_ios)),
-                ],
+                    Align(
+                      alignment: Alignment.center,
+                      child: Padding(
+                        padding: const EdgeInsets.only(left: 12, right: 125),
+                        child: FittedBox(
+                          fit: BoxFit.scaleDown,
+                          child: Column(
+                            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Text(
+                                cardTitle,
+                                style: cardTitleTheme,
+                              ),
+                              Divider(),
+                              Divider(),
+                              Text(
+                                cardSubTitle,
+                                style: cardSubTitleTheme,
+                                overflow: TextOverflow.fade,
+                              ),
+                            ],
+                          ),
+                        ),
+                      ),
+                    ),
+                    Padding(
+                      padding: const EdgeInsets.only(right: 10.0),
+                      child: Align(
+                          alignment: Alignment.centerRight,
+                          child: Icon(Icons.arrow_forward_ios)),
+                    ),
+                  ],
+                ),
               ),
             ),
           ),

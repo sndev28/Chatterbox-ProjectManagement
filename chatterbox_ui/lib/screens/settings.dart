@@ -14,6 +14,7 @@ class Settings extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
+          toolbarHeight: 40,
           elevation: 0,
           backgroundColor: currentTheme.secondaryColor,
           foregroundColor: currentTheme.secondaryColor,
@@ -45,7 +46,7 @@ class Settings extends StatelessWidget {
             ),
             Container(
               width: MediaQuery.of(context).size.width,
-              height: 80,
+              height: 95,
               decoration: BoxDecoration(
                 color: currentTheme.secondaryColor,
                 borderRadius: BorderRadius.only(

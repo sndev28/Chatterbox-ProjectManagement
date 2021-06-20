@@ -120,24 +120,18 @@ class _ProjectSettingsChatsPageState extends State<ProjectSettingsChatsPage> {
                             )
                           ],
                         ),
-                        child: Column(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          crossAxisAlignment: CrossAxisAlignment.stretch,
-                          children: [
-                            Padding(
-                              padding: EdgeInsets.only(
-                                  left: 25, bottom: 7, right: 25),
-                              child: Align(
-                                alignment: Alignment.centerRight,
-                                child: FittedBox(
-                                  fit: BoxFit.scaleDown,
-                                  child: Text(
-                                      currentProject.projectName + ' : Chats',
-                                      style: homeUserStyle),
-                                ),
-                              ),
+                        child: Padding(
+                          padding:
+                              EdgeInsets.only(left: 25, bottom: 7, right: 25),
+                          child: Align(
+                            alignment: Alignment.bottomRight,
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                  currentProject.projectName + ' : Chats',
+                                  style: homeUserStyle),
                             ),
-                          ],
+                          ),
                         ),
                       ),
                     ],

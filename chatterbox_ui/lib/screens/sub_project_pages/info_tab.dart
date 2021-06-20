@@ -94,6 +94,7 @@ class _InfoTabState extends State<InfoTab> {
               Padding(
                 padding: const EdgeInsets.only(right: 1),
                 child: Container(
+                    padding: EdgeInsets.all(4.0),
                     width: 50,
                     decoration: BoxDecoration(
                       color: currentTheme.primaryColor,
@@ -102,14 +103,18 @@ class _InfoTabState extends State<InfoTab> {
                     child: Center(
                         child: RotatedBox(
                             quarterTurns: 3,
-                            child: Text(
-                              'Name',
-                              style: infoTitleTheme,
-                              maxLines: 1,
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                'Name',
+                                style: infoTitleTheme,
+                                maxLines: 1,
+                              ),
                             )))),
               ),
               Expanded(
                 child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10.0),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
@@ -144,6 +149,7 @@ class _InfoTabState extends State<InfoTab> {
               Padding(
                 padding: const EdgeInsets.only(right: 1),
                 child: Container(
+                    padding: EdgeInsets.all(4.0),
                     width: 50,
                     decoration: BoxDecoration(
                       color: currentTheme.primaryColor,
@@ -152,19 +158,24 @@ class _InfoTabState extends State<InfoTab> {
                     child: Center(
                         child: RotatedBox(
                             quarterTurns: 3,
-                            child: Text(
-                              'Created On',
-                              style: infoTitleTheme,
-                              maxLines: 1,
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                'Created On',
+                                style: infoTitleTheme,
+                                maxLines: 1,
+                              ),
                             )))),
               ),
               Expanded(
                 child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10.0),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
                   ),
-                  child: Center(
+                  child: FittedBox(
+                    fit: BoxFit.scaleDown,
                     child: Text(currentProject.projectCreatedOn,
                         style: infoSubTitleTheme),
                   ),
@@ -194,6 +205,7 @@ class _InfoTabState extends State<InfoTab> {
               Padding(
                 padding: const EdgeInsets.only(right: 1),
                 child: Container(
+                    padding: EdgeInsets.all(4.0),
                     width: 50,
                     decoration: BoxDecoration(
                       color: currentTheme.primaryColor,
@@ -202,10 +214,13 @@ class _InfoTabState extends State<InfoTab> {
                     child: Center(
                         child: RotatedBox(
                             quarterTurns: 3,
-                            child: Text(
-                              'Description',
-                              style: infoTitleTheme,
-                              maxLines: 1,
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                'Description',
+                                style: infoTitleTheme,
+                                maxLines: 1,
+                              ),
                             )))),
               ),
               Expanded(
@@ -253,6 +268,7 @@ class _InfoTabState extends State<InfoTab> {
               Padding(
                 padding: const EdgeInsets.only(right: 1),
                 child: Container(
+                    padding: EdgeInsets.all(4.0),
                     width: 50,
                     decoration: BoxDecoration(
                       color: currentTheme.primaryColor,
@@ -261,13 +277,17 @@ class _InfoTabState extends State<InfoTab> {
                     child: Center(
                         child: RotatedBox(
                             quarterTurns: 3,
-                            child: Text(
-                              'RepoLink',
-                              style: infoTitleTheme,
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                'RepoLink',
+                                style: infoTitleTheme,
+                              ),
                             )))),
               ),
               Expanded(
                 child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10.0),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
@@ -308,6 +328,7 @@ class _InfoTabState extends State<InfoTab> {
               Padding(
                 padding: const EdgeInsets.only(right: 1),
                 child: Container(
+                    padding: EdgeInsets.all(4.0),
                     width: 50,
                     decoration: BoxDecoration(
                       color: currentTheme.primaryColor,
@@ -316,13 +337,17 @@ class _InfoTabState extends State<InfoTab> {
                     child: Center(
                         child: RotatedBox(
                             quarterTurns: 3,
-                            child: Text(
-                              'Admin',
-                              style: infoTitleTheme,
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                'Admin',
+                                style: infoTitleTheme,
+                              ),
                             )))),
               ),
               Expanded(
                 child: Container(
+                  padding: EdgeInsets.symmetric(horizontal: 10.0),
                   decoration: BoxDecoration(
                     color: Colors.white,
                     borderRadius: BorderRadius.circular(12),
@@ -356,6 +381,7 @@ class _InfoTabState extends State<InfoTab> {
               Padding(
                 padding: const EdgeInsets.only(right: 1),
                 child: Container(
+                    padding: EdgeInsets.all(4.0),
                     width: 50,
                     decoration: BoxDecoration(
                       color: currentTheme.primaryColor,
@@ -364,10 +390,13 @@ class _InfoTabState extends State<InfoTab> {
                     child: Center(
                         child: RotatedBox(
                             quarterTurns: 3,
-                            child: Text(
-                              'Members',
-                              style: infoTitleTheme,
-                              maxLines: 1,
+                            child: FittedBox(
+                              fit: BoxFit.scaleDown,
+                              child: Text(
+                                'Members',
+                                style: infoTitleTheme,
+                                maxLines: 1,
+                              ),
                             )))),
               ),
               Expanded(

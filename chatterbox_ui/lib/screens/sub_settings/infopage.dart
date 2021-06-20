@@ -13,6 +13,7 @@ class SettingsInfoPage extends StatelessWidget {
       child: Scaffold(
         backgroundColor: Colors.transparent,
         appBar: AppBar(
+          toolbarHeight: 40,
           elevation: 0,
           backgroundColor: currentTheme.secondaryColor,
           foregroundColor: currentTheme.secondaryColor,
@@ -43,7 +44,7 @@ class SettingsInfoPage extends StatelessWidget {
             ),
             Container(
               width: MediaQuery.of(context).size.width,
-              height: 80,
+              height: 95,
               decoration: BoxDecoration(
                 color: currentTheme.secondaryColor,
                 borderRadius: BorderRadius.only(
@@ -59,18 +60,12 @@ class SettingsInfoPage extends StatelessWidget {
                   )
                 ],
               ),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.end,
-                crossAxisAlignment: CrossAxisAlignment.stretch,
-                children: [
-                  Align(
-                    alignment: Alignment.centerRight,
-                    child: Padding(
-                      padding: EdgeInsets.only(right: 40, bottom: 7),
-                      child: Text('Info', style: homeUserStyle),
-                    ),
-                  ),
-                ],
+              child: Align(
+                alignment: Alignment.centerRight,
+                child: Padding(
+                  padding: EdgeInsets.only(right: 40, bottom: 7),
+                  child: Text('Info', style: homeUserStyle),
+                ),
               ),
             ),
           ],
