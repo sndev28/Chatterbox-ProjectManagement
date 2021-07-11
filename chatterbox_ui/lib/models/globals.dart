@@ -10,7 +10,7 @@ import 'package:hive/hive.dart';
 // ignore: unused_import
 import 'package:hive_flutter/hive_flutter.dart';
 
-const ADDR = '192.168.1.37';
+const ADDR = '169.254.221.56';
 
 const String SEPERATOR = '<sep>';
 

@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'package:chatterbox_ui/models/chat.dart';
 import 'package:chatterbox_ui/models/globals.dart';
@@ -18,9 +19,14 @@ class Chatroom extends StatefulWidget {
 
 class _ChatroomState extends State<Chatroom> {
   TextEditingController messageController = TextEditingController();
+  ScrollController _scrollController = ScrollController();
 
   @override
   Widget build(BuildContext context) {
+    Timer(
+        Duration(milliseconds: 150),
+        () => _scrollController
+            .jumpTo(_scrollController.position.maxScrollExtent));
     return Container(
       decoration: BoxDecoration(
         image: DecorationImage(
@@ -89,7 +95,12 @@ class _ChatroomState extends State<Chatroom> {
                         openData.put(currentChat.chatID, emptyList);
                       } else
                         listOfMessages = openData.get(currentChat.chatID);
+                      Timer(
+                          Duration(milliseconds: 150),
+                          () => _scrollController.jumpTo(
+                              _scrollController.position.maxScrollExtent));
                       return ListView.builder(
+                        controller: _scrollController,
                         itemCount: listOfMessages.length,
                         itemBuilder: (context, index) {
                           Map message = jsonDecode(listOfMessages[index]);
@@ -142,22 +153,20 @@ class _ChatroomState extends State<Chatroom> {
                           icon: Icon(Icons.send_outlined),
                           onPressed: () {
                             if (messageController.text != '') {
-                              // List previous = openData.get(currentChat.chatID);
                               String encodedMessage = messageEncoder(
                                   currentChat.chatID,
                                   currentUser.userID,
                                   messageController.text);
                               SocketConnection.instance
                                   .sendMessage(encodedMessage);
-                              // previous.add(encodedMessage);
-                              // openData.put(currentChat.chatID, previous);
-                              messageController.text = '';
-                            }
 
-                            // setState(() {
-                            //   listOfMessages.add(messageController.text);
-                            //   messageController.text = '';
-                            // });
+                              messageController.text = '';
+                              Timer(
+                                  Duration(milliseconds: 150),
+                                  () => _scrollController.jumpTo(
+                                      _scrollController
+                                          .position.maxScrollExtent));
+                            }
                           },
                         ),
                       ),
